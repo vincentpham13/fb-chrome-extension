@@ -1,0 +1,44 @@
+.header-wrapper {
+  display: flex;
+  margin-bottom: 1rem;
+  
+  .user-info {
+    width: 60%;
+    display: flex;
+    align-items: center;
+    .user-image {
+      height: 48px;
+      width: 48px;
+      border-radius: 50%;
+      margin-right: 18px;
+    }
+
+    .user-name {
+      font-size: 1.5rem;
+      text-transform: capitalize;
+      font-weight: 600;
+    }
+  }
+
+  .balance-info {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    font-weight: bold;
+
+    .balance-headline {
+      flex: 1;
+      font-size: 1rem;
+      color: #2F4858;
+      border-radius: 50%;
+      
+    }
+
+    .balance-ammount {
+      font-size: 0.875rem;
+      width: 35px;
+      color: #04AE34;
+      text-transform: capitalize;
+    }
+  }
+}

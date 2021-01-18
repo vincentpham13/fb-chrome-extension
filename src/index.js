@@ -1,5 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import './fonts/Roboto-Bold.ttf';
+import './fonts/Roboto-Medium.ttf';
+import './fonts/Roboto-Light.ttf';
+import './fonts/Roboto-ThinItalic.ttf';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';

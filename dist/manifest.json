@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+  "name": "Covid19",
+  "version": "1.0.0",
+  "description": "Provides the cases details regarding Covid19 with respective to any Country",
+  "browser_action": {
+    "default_popup": "index.html"
+  },
+  "icons": {
+    "16": "logo192.png"
+  },
+  "permissions": [
+    "tabs",
+    "windows",
+    "webRequest",
+    "https://*/",
+    "notifications",
+    "background",
+    "storage"
+  ],
+  "content_security_policy": "script-src 'self' https://unpkg.com 'unsafe-eval' https://connect.facebook.net; object-src 'self'",
+  "background": {
+    "scripts": [
+      "background.js",
+      "backgroundApi.js"
+    ],
+    "persistent": true
+  }
+}
