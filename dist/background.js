@@ -1,9 +1,3 @@
-let count = 0;
-
-setInterval(() => {
-  console.log(count++);
-}, 6000);
-
 const successURL = 'https://www.facebook.com/connect/login_success.html';
 const options = {
   type: "basic",
