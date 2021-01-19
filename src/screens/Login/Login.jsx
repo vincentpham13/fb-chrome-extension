@@ -29,18 +29,18 @@ const Login = (props) => {
   const authenticationUrl = path + query;
 
   const openAuthenticationUrl = () => {
-    // chrome.notifications.create(`fb-connect-start-${new Date().getTime()}`, options, (notificationId) => {
-    // });
+    chrome.notifications.create(`fb-connect-start-${new Date().getTime()}`, options, (notificationId) => {
+    });
 
-    // setTimeout(() => {
-    //   chrome.tabs.create({
-    //     'url': authenticationUrl,
-    //     // 'type': 'panel',
-    //     // 'state': 'fullscreen'
-    //   }, function (window) {
-    //     // console.log("🚀 ~ file: Login.jsx ~ line 40 ~ openAuthenticationUrl ~ window | tab", window)
-    //   });
-    // }, 500);
+    setTimeout(() => {
+      chrome.tabs.create({
+        'url': authenticationUrl,
+        // 'type': 'panel',
+        // 'state': 'fullscreen'
+      }, function (window) {
+        // console.log("🚀 ~ file: Login.jsx ~ line 40 ~ openAuthenticationUrl ~ window | tab", window)
+      });
+    }, 500);
   }
 
   const sendMsgtoBackground = () => {
@@ -51,20 +51,21 @@ const Login = (props) => {
   }
 
   useEffect(() => {
-    // chrome.storage.sync.get(['FBaccessToken'], function (result) {
-    //   setAuthenticated(result['FBaccessToken']);
-    //   if (result['FBaccessToken']) {
-    //     history.push('/home');
-    //   } else {
-    //     chrome.storage.onChanged.addListener(function (changes, namespace) {
-    //       if (!changes?.FBaccessToken?.newValue) {
-    //         setAuthenticated(false);
-    //       }
-    //     });
-    //   }
+    chrome.storage.sync.get(['FBaccessToken'], function (result) {
+      setAuthenticated(result['FBaccessToken']);
+      if (result['FBaccessToken']) {
+        console.log("🚀 ~ file: Login.jsx ~ line 57 ~ result['FBaccessToken']", result['FBaccessToken'])
+        history.push('/home');
+      } else {
+        chrome.storage.onChanged.addListener(function (changes, namespace) {
+          if (!changes?.FBaccessToken?.newValue) {
+            setAuthenticated(false);
+          }
+        });
+      }
 
-    //   return () => chrome.storage.onChanged.removeListener()
-    // })
+      return () => chrome.storage.onChanged.removeListener()
+    })
   }, []);
 
   return (

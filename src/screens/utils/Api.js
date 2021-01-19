@@ -27,7 +27,7 @@ const API = {
       }
     };
     const htmlContent = (await axios(config)).data;
-    const uinfoRegex = /\/messages\/read\/\?tid=cid\.c\.([0-9]*).*pageID=.*?">([a-zA-Z\s]*)</gm;
+    const uinfoRegex = /\/messages\/read\/\?tid=cid\.c\.([0-9]*).*?fua">([a-zA-Z\s\p{L}]*)/gm;
 
     const UIDs = [...(`${htmlContent}`.matchAll(uinfoRegex))].map(arr => ({
       uid: arr[1],

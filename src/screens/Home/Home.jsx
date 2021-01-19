@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 
+import Button from '../../components/Common/Button';
 import API from '../utils/Api';
 import Header from "../../components/Common/Header";
 import styles from './Home.module.scss';
@@ -14,12 +15,54 @@ const Home = (props) => {
 
   const [fanpages, setFanpages] = useState([]);
   const [selectedPageID, setSelectedPageID] = useState();
-  const [pageMembers, setPageMembers] = useState([]);
+  const [pageMembers, setPageMembers] = useState([
+    {
+      uid: 1213323232,
+      name: 'pham hoang minh nhat',
+    },
+    {
+      uid: 12133232322,
+      name: 'pham hoang minh nhat',
+    },
+    {
+      uid: 12133233232,
+      name: 'pham hoang minh nhat',
+    },
+    {
+      uid: 121332333232,
+      name: 'pham hoang minh nhat',
+    },
+    {
+      uid: 121332233232,
+      name: 'pham hoang minh nhat',
+    },
+    {
+      uid: 12133223233232,
+      name: 'pham hoang minh nhat',
+    },
+    {
+      uid: 12133232233232,
+      name: 'pham hoang minh nhat',
+    },
+  ]);
+  const [intervalMessageTime, setIntervalMessageTime] = useState(1)
   const logout = () => {
     // chrome.storage.sync.set({
     //   'FBaccessToken': null, function() {
     //   }
     // })
+  }
+
+  const decrementSecond = () => {
+    if (intervalMessageTime > 1) {
+      setIntervalMessageTime(second => second -= 1)
+    }
+  }
+
+  const incrementSecond = () => {
+    if (intervalMessageTime < 5) {
+      setIntervalMessageTime(second => second += 1)
+    }
   }
 
   const onSelectedPageChange = (e) => {
@@ -111,21 +154,16 @@ const Home = (props) => {
           <section className={styles["menu-item"]}>
             <div className={styles["headline"]}>
               Khoảng cách mỗi tin nhắn
-          </div>
-            <div className={styles["select-fanpage"]}>
-              <div className={styles["fanpage"]}>
-                <select className={styles["select-box"]}>
-                  <option>Kinh doanh online</option>
-                  <option>Mở rộng chiến lược kinh doanh</option>
-                  <option>Vé xe rẻ</option>
-                  <option>Bất động sản Sài Gòn</option>
-                  <option>Nhà đất xanh</option>
-                </select>
-              </div>
-              <button className={styles["reload"]}>
-                Reload
-            </button>
             </div>
+            <div className={styles["timing-tool"]}>
+              <div className={styles["icon"]}></div>
+              <div className={styles["btn-timing"]}>
+                <button onClick={decrementSecond}>-</button>
+                <input value={intervalMessageTime}></input>
+                <button onClick={incrementSecond}>+</button>
+              </div>
+            </div>
+            <Button loading={false}/>
           </section>
         </div>
         <button onClick={logout}>Logout</button>
