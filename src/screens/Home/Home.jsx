@@ -10,40 +10,43 @@ import refreshIcon from '../../images/refresh-arrow.png';
 const Home = (props) => {
   const {
     history,
-    accessToken = 'EAABwzLixnjYBAHIgZCDlzZBsBltlPGru9rBefyNRcxMTlu6v9Yw89B81flT2EoE8NRcHy1zZCrvuZBFtmyxlsa4qsZAXiGmQrEUpnz9JABWigOKVATqYWiRQDarOlnZBtOtxGSwA9Pku9OjuOI08wzKto6wwWLfqBAQTMZA1xZBMLpflG8fC7Lmw'
   } = props;
 
+  const [userInfo, setUserInfo] = useState({});
+  const [accessToken, setAccessToken] = useState({});
+  const [sending, setSending] = useState(false);
+
   const [fanpages, setFanpages] = useState([]);
-  const [selectedPageID, setSelectedPageID] = useState();
+  const [selectedPageID, setSelectedPageID] = useState(0);
   const [pageMembers, setPageMembers] = useState([
-    {
-      uid: 1213323232,
-      name: 'pham hoang minh nhat',
-    },
-    {
-      uid: 12133232322,
-      name: 'pham hoang minh nhat',
-    },
-    {
-      uid: 12133233232,
-      name: 'pham hoang minh nhat',
-    },
-    {
-      uid: 121332333232,
-      name: 'pham hoang minh nhat',
-    },
-    {
-      uid: 121332233232,
-      name: 'pham hoang minh nhat',
-    },
-    {
-      uid: 12133223233232,
-      name: 'pham hoang minh nhat',
-    },
-    {
-      uid: 12133232233232,
-      name: 'pham hoang minh nhat',
-    },
+    // {
+    //   uid: 1213323232,
+    //   name: 'pham hoang minh nhat',
+    // },
+    // {
+    //   uid: 12133232322,
+    //   name: 'pham hoang minh nhat',
+    // },
+    // {
+    //   uid: 12133233232,
+    //   name: 'pham hoang minh nhat',
+    // },
+    // {
+    //   uid: 121332333232,
+    //   name: 'pham hoang minh nhat',
+    // },
+    // {
+    //   uid: 121332233232,
+    //   name: 'pham hoang minh nhat',
+    // },
+    // {
+    //   uid: 12133223233232,
+    //   name: 'pham hoang minh nhat',
+    // },
+    // {
+    //   uid: 12133232233232,
+    //   name: 'pham hoang minh nhat',
+    // },
   ]);
   const [intervalMessageTime, setIntervalMessageTime] = useState(1)
 
@@ -87,9 +90,11 @@ const Home = (props) => {
 
   const sendMessages = () => {
     // validate data
-    if (!selectedPageID  || intervalMessageTime > 5 || intervalMessageTime < 1) {
+    if (!selectedPageID || intervalMessageTime > 5 || intervalMessageTime < 1) {
       return;
     }
+
+    setSending(true);
 
     chrome.runtime.sendMessage('', {
       type: "SEND_MESSAGE_TO_PAGE_MEMBERS",
@@ -104,6 +109,7 @@ const Home = (props) => {
     })
   }
 
+  // Fetch members
   useEffect(() => {
     async function fetchMembers() {
       const UIDs = await API.getPageMembers(selectedPageID);
@@ -112,22 +118,49 @@ const Home = (props) => {
     fetchMembers();
   }, [selectedPageID]);
 
+  // Fetch fanpages
   useEffect(() => {
-    // chrome.storage.onChanged.addListener(function (changes, namespace) {
-    //   if (!changes?.FBaccessToken?.newValue) {
-    //     history.push('/');
-    //   }
-    // });
+    chrome.storage.onChanged.addListener(function (changes, namespace) {
+      if (!changes?.FBaccessToken?.newValue) {
+        history.push('/');
+      }
+    });
     async function fetchFanpages() {
+      await API.getUserInfo(accessToken);
       const { data: pages } = await API.getFanpages(accessToken);
       setFanpages(pages);
     }
     fetchFanpages();
+  }, [accessToken]);
+
+  // Get userinfo
+  useEffect(() => {
+    chrome.storage.sync.get(['FBuserInfo', 'FBaccessToken'], function (data) {
+      setUserInfo(data?.FBuserInfo);
+      setAccessToken(data?.FBaccessToken);
+    })
+  }, []);
+
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+      const {
+        type,
+        data,
+      } = message;
+      switch (type) {
+        case "RECEIVE_COMPLETED_MESSAGE":
+          const { pageID, memberID } = data;
+          break;
+
+        default:
+          break;
+      }
+    });
   }, []);
 
   return (
     <>
-      <Header />
+      <Header userInfo={userInfo} />
       <div className={styles["home-wrapper"]}>
         <div className={styles["menu-group"]}>
           <section className={styles["menu-item"]}>
@@ -140,6 +173,7 @@ const Home = (props) => {
                   onChange={onSelectedPageChange}
                   className={styles["select-box"]}
                 >
+                  <option key={0} value={0}>Chọn Fanpage để gửi tin nhắn</option>
                   {
                     fanpages.map(fPage => (
                       <option key={fPage.id} value={fPage.id}>{fPage.name}</option>
@@ -203,7 +237,7 @@ const Home = (props) => {
             </div>
             <Button
               onClick={sendMessages}
-              loading={false}
+              loading={sending}
             />
           </section>
         </div>

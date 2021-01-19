@@ -49,7 +49,8 @@
     align-items: center;
     justify-content: space-around;
     height: 40px;
-    width: 110px;
+    min-width: 130px;
+    padding: 0 0.625rem;
     border: none;
     background-color: #04ae34;
     border-radius: 4px;
@@ -80,7 +81,7 @@
       float: left;
       background-image: url("../../images/loading.png");
       background-size: contain;
-      animation: spin 2s linear infinite;
+      animation: spin 1s linear infinite;
     }
   }
 }

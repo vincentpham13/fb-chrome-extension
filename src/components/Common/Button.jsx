@@ -15,7 +15,7 @@ const Button = ({
         disabled={loading}
       >
         <span className={styles[`${loading ? 'icon-loading' : 'icon-send'}`]}></span>
-        Gửi
+        {loading ? 'Đang gửi' : 'Gửi'}
       </button>
     </div>
   )

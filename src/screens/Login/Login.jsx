@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 
+import API from '../utils/Api';
 import styles from './Login.module.scss';
 /* eslint-disable-rule no-undef */
 const Login = (props) => {
@@ -19,10 +20,10 @@ const Login = (props) => {
   const queryParams = [
     'client_id=' + appID,
     // 'auth_type=rerequest',
-    'scope=public_profile',
+    'scope=public_profile,pages_show_list',
     'redirect_uri=' + successURL,
     'response_type=token',
-    // 'display=popup'
+    'display=popup'
   ];
 
   const query = queryParams.join('&');
@@ -50,10 +51,15 @@ const Login = (props) => {
   }
 
   useEffect(() => {
-    chrome.storage.sync.get(['FBaccessToken'], function (result) {
+    chrome.storage.sync.get(['FBaccessToken'], async function (result) {
       setAuthenticated(result['FBaccessToken']);
-      if (result['FBaccessToken']) {
-        history.push('/home');
+
+      const accessToken = result['FBaccessToken'];
+      if (accessToken) {
+        const userInfo = await API.getUserInfo(accessToken)
+        chrome.storage.sync.set({ 'FBuserInfo': userInfo }, function () {
+          history.push('/home');
+        });
       } else {
         chrome.storage.onChanged.addListener(function (changes, namespace) {
           if (!changes?.FBaccessToken?.newValue) {
