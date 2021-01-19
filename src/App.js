@@ -19,7 +19,7 @@ function App() {
           renders the first one that matches the current URL. */}
       <Switch>
         <Route exact path="/">
-          <Home />
+          <Login />
         </Route>
         <Route path="/home">
           <Home />

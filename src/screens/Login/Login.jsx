@@ -38,7 +38,6 @@ const Login = (props) => {
         // 'type': 'panel',
         // 'state': 'fullscreen'
       }, function (window) {
-        // console.log("🚀 ~ file: Login.jsx ~ line 40 ~ openAuthenticationUrl ~ window | tab", window)
       });
     }, 500);
   }
@@ -54,7 +53,6 @@ const Login = (props) => {
     chrome.storage.sync.get(['FBaccessToken'], function (result) {
       setAuthenticated(result['FBaccessToken']);
       if (result['FBaccessToken']) {
-        console.log("🚀 ~ file: Login.jsx ~ line 57 ~ result['FBaccessToken']", result['FBaccessToken'])
         history.push('/home');
       } else {
         chrome.storage.onChanged.addListener(function (changes, namespace) {
@@ -70,8 +68,6 @@ const Login = (props) => {
 
   return (
     <div className={styles["Login_wrapper"]}>
-      {/* <h1>Authenticate your facebook page</h1> */}
-      {/* <p>{new Date().toISOString()}</p> */}
       <button
         disabled={authenticated}
         onClick={openAuthenticationUrl}

@@ -46,22 +46,33 @@ const Home = (props) => {
     },
   ]);
   const [intervalMessageTime, setIntervalMessageTime] = useState(1)
+
   const logout = () => {
-    // chrome.storage.sync.set({
-    //   'FBaccessToken': null, function() {
-    //   }
-    // })
+    chrome.storage.sync.set({
+      'FBaccessToken': null, function() {
+      }
+    })
   }
 
   const decrementSecond = () => {
     if (intervalMessageTime > 1) {
-      setIntervalMessageTime(second => second -= 1)
+      setIntervalMessageTime(intervalMessageTime - 1)
     }
   }
 
   const incrementSecond = () => {
+    console.log('increment current', typeof intervalMessageTime);
     if (intervalMessageTime < 5) {
-      setIntervalMessageTime(second => second += 1)
+      setIntervalMessageTime(intervalMessageTime + 1)
+    }
+  }
+
+  const onIntervalMessageTimeChage = (e) => {
+    console.log('onchange current', intervalMessageTime);
+    const val = parseInt(e.target.value, 10);
+    console.log('onchange val', val);
+    if (1 <= val && val <= 5) {
+      setIntervalMessageTime(val)
     }
   }
 
@@ -72,6 +83,25 @@ const Home = (props) => {
   const reloadAllFanPages = async (e) => {
     const { data: pages } = await API.getFanpages(accessToken);
     setFanpages(pages);
+  }
+
+  const sendMessages = () => {
+    // validate data
+    if (!selectedPageID  || intervalMessageTime > 5 || intervalMessageTime < 1) {
+      return;
+    }
+
+    chrome.runtime.sendMessage('', {
+      type: "SEND_MESSAGE_TO_PAGE_MEMBERS",
+      data: {
+        pageID: selectedPageID,
+        memberIDs: pageMembers.map(mem => mem.uid),
+        interval: intervalMessageTime,
+      },
+    }, {
+    }, function (response) {
+      console.log("🚀 ~ file: Home.jsx ~ line 106 ~ sendMessages ~ response", response)
+    })
   }
 
   useEffect(() => {
@@ -158,12 +188,23 @@ const Home = (props) => {
             <div className={styles["timing-tool"]}>
               <div className={styles["icon"]}></div>
               <div className={styles["btn-timing"]}>
-                <button onClick={decrementSecond}>-</button>
-                <input value={intervalMessageTime}></input>
-                <button onClick={incrementSecond}>+</button>
+                <button
+                  onClick={decrementSecond}
+                >-</button>
+                <input
+                  type="number"
+                  onChange={onIntervalMessageTimeChage}
+                  value={intervalMessageTime}
+                ></input>
+                <button
+                  onClick={incrementSecond}
+                >+</button>
               </div>
             </div>
-            <Button loading={false}/>
+            <Button
+              onClick={sendMessages}
+              loading={false}
+            />
           </section>
         </div>
         <button onClick={logout}>Logout</button>

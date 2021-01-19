@@ -4,12 +4,14 @@ import cx from 'classnames';
 import styles from './Common.module.scss';
 
 const Button = ({
-  loading
+  loading,
+  ...rest
 }) => {
 
   return (
     <div className={styles["btn-loading"]}>
       <button
+        {...rest}
         disabled={loading}
       >
         <span className={styles[`${loading ? 'icon-loading' : 'icon-send'}`]}></span>

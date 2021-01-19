@@ -12,11 +12,11 @@
   "permissions": [
     "tabs",
     "windows",
-    "webRequest",
     "https://*/",
     "notifications",
     "background",
-    "storage"
+    "storage",
+    "activeTab"
   ],
   "content_security_policy": "script-src 'self' https://unpkg.com 'unsafe-eval' https://connect.facebook.net; object-src 'self'",
   "background": {
@@ -24,6 +24,6 @@
       "background.js",
       "backgroundApi.js"
     ],
-    "persistent": true
+    "persistent": false
   }
 }
