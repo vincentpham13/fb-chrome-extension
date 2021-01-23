@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 
-import Button from '../../components/Common/Button';
 import API from '../utils/Api';
+import { useSuccessMessage } from './hooks';
+
+import Button from '../../components/Common/Button';
+import ProgressBar from '../../components/Common/ProgressBar';
 import Header from "../../components/Common/Header";
 import styles from './Home.module.scss';
 import refreshIcon from '../../images/refresh-arrow.png';
@@ -18,37 +21,39 @@ const Home = (props) => {
 
   const [fanpages, setFanpages] = useState([]);
   const [selectedPageID, setSelectedPageID] = useState(0);
-  const [pageMembers, setPageMembers] = useState([
-    // {
-    //   uid: 1213323232,
-    //   name: 'pham hoang minh nhat',
-    // },
-    // {
-    //   uid: 12133232322,
-    //   name: 'pham hoang minh nhat',
-    // },
-    // {
-    //   uid: 12133233232,
-    //   name: 'pham hoang minh nhat',
-    // },
-    // {
-    //   uid: 121332333232,
-    //   name: 'pham hoang minh nhat',
-    // },
-    // {
-    //   uid: 121332233232,
-    //   name: 'pham hoang minh nhat',
-    // },
-    // {
-    //   uid: 12133223233232,
-    //   name: 'pham hoang minh nhat',
-    // },
-    // {
-    //   uid: 12133232233232,
-    //   name: 'pham hoang minh nhat',
-    // },
-  ]);
-  const [intervalMessageTime, setIntervalMessageTime] = useState(1)
+  const [pageMembers, setPageMembers] = useState([]);
+
+  const [deliveredMessages, setDeliveredMessages] = useState([]);
+  const deliveredMessage = useSuccessMessage();
+  // {
+  //   uid: 1213323232,
+  //   name: 'pham hoang minh nhat',
+  // },
+  // {
+  //   uid: 12133232322,
+  //   name: 'pham hoang minh nhat',
+  // },
+  // {
+  //   uid: 12133233232,
+  //   name: 'pham hoang minh nhat',
+  // },
+  // {
+  //   uid: 121332333232,
+  //   name: 'pham hoang minh nhat',
+  // },
+  // {
+  //   uid: 121332233232,
+  //   name: 'pham hoang minh nhat',
+  // },
+  // {
+  //   uid: 12133223233232,
+  //   name: 'pham hoang minh nhat',
+  // },
+  // {
+  //   uid: 12133232233232,
+  //   name: 'pham hoang minh nhat',
+  // },
+  const [intervalMessageTime, setIntervalMessageTime] = useState(1);
 
   const logout = () => {
     chrome.storage.sync.set({
@@ -95,6 +100,7 @@ const Home = (props) => {
     }
 
     setSending(true);
+    setDeliveredMessages([]);
 
     chrome.runtime.sendMessage('', {
       type: "SEND_MESSAGE_TO_PAGE_MEMBERS",
@@ -111,6 +117,8 @@ const Home = (props) => {
 
   // Fetch members
   useEffect(() => {
+    setSending(false);
+    setDeliveredMessages([]);
     async function fetchMembers() {
       const UIDs = await API.getPageMembers(selectedPageID);
       setPageMembers(UIDs);
@@ -142,21 +150,33 @@ const Home = (props) => {
   }, []);
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    console.log("🚀 ~ file: Home.jsx ~ line 153 ~ Home ~ deliveredMessage", deliveredMessage);
+    if (deliveredMessage) {
       const {
-        type,
-        data,
-      } = message;
-      switch (type) {
-        case "RECEIVE_COMPLETED_MESSAGE":
-          const { pageID, memberID } = data;
-          break;
+        pageID,
+        memberID,
+      } = deliveredMessage;
 
-        default:
-          break;
+      if (pageID == selectedPageID) {
+        if (!deliveredMessages.includes(memberID)) {
+          setDeliveredMessages([
+            ...deliveredMessages,
+            memberID
+          ]);
+        } else {
+          console.warn('Duplicated completed message under memberID:', memberID);
+        }
       }
-    });
-  }, []);
+    }
+  }, [deliveredMessage]);
+
+  useEffect(() => {
+    if (deliveredMessages.length === pageMembers.length) {
+      setSending(false);
+    }
+  }, [deliveredMessages]);
+
+  const percent = Math.floor(deliveredMessages.length / (pageMembers.length || 1) * 100);
 
   return (
     <>
@@ -238,6 +258,9 @@ const Home = (props) => {
             <Button
               onClick={sendMessages}
               loading={sending}
+            />
+            <ProgressBar
+              percent={percent}
             />
           </section>
         </div>

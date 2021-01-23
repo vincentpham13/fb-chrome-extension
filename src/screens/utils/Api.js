@@ -16,10 +16,10 @@ const API = {
     };
     return (await axios(config)).data;
   },
-  getPageMembers: async (pageID) => {
+  getPageMembers: async (pageID, nextUrl) => {
     const config = {
       method: 'get',
-      url: `https://mbasic.facebook.com/messages/?pageID=${pageID}`,
+      url: !nextUrl ? `https://mbasic.facebook.com/messages/?pageID=${pageID}` : nextUrl,
       headers: {
         'authority': 'mbasic.facebook.com',
         'accept': '*/*',
@@ -28,13 +28,24 @@ const API = {
     };
     const htmlContent = (await axios(config)).data;
     const uinfoRegex = /\/messages\/read\/\?tid=cid\.c\.([0-9]*).*?pageID=.*?fua">([\D]*?)</gm;
+    const nextPageRegex = /<a\shref=\"(\/messages\/\?pageNum=\d+&amp;selectable&amp;pageID=.*)"><span>/g;
 
     const UIDs = [...(`${htmlContent}`.matchAll(uinfoRegex))].map(arr => ({
       uid: arr[1],
       name: arr[2],
     }));
+    
+    if(!UIDs.length) {
+      return [];
+    }
 
-    return UIDs;
+    const matched = [...`${htmlContent}`.matchAll(nextPageRegex)];
+    const nextPageUrl = matched.length && (matched[0][1]).replaceAll('amp;', '');
+
+    return nextPageUrl ? [
+      ...UIDs,
+      ...(await API.getPageMembers(pageID, `https://mbasic.facebook.com${nextPageUrl}`))
+    ] : UIDs;
   },
   getUserInfo: async (accessToken) => {
     const config = {
