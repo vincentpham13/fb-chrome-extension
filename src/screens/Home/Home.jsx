@@ -14,7 +14,6 @@ const Home = (props) => {
   } = props;
   const {
     userInfo,
-    fbAccessToken,
   } = history.location.state;
 
   return (

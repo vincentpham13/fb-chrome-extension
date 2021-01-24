@@ -8,17 +8,19 @@ import LoadingButton from '../../components/Common/LoadingButton';
 import NormalButton from '../../components/Common/NormalButton';
 import ProgressBar from '../../components/Common/ProgressBar';
 import styles from './Home.module.scss';
-import refreshIcon from '../../images/refresh-arrow.png';
 
 const Main = (props) => {
   const {
     history,
   } = props;
   const {
+    message,
+    campaignName,
     selectedPageID,
+    accessToken,
   } = history.location.state || { selectedPageID: 1 };
+  console.log("🚀 ~ file: Main.jsx ~ line 20 ~ Main ~ history.location.state", history.location.state)
 
-  const [accessToken, setAccessToken] = useState({});
   const [sending, setSending] = useState(false);
 
   const [pageMembers, setPageMembers] = useState([]);
@@ -54,14 +56,23 @@ const Main = (props) => {
     setSelectedPageID(e.target.value);
   }
 
-  const reloadAllFanPages = async (e) => {
-    const { data: pages } = await API.getFanpages(accessToken);
-    setFanpages(pages);
-  }
-
-  const sendMessages = () => {
+  const sendMessages = async () => {
     // validate data
-    if (!selectedPageID || intervalMessageTime > 5 || intervalMessageTime < 1) {
+    if (
+      !selectedPageID
+      || intervalMessageTime > 5
+      || intervalMessageTime < 1
+      || !pageMembers.length
+      || !campaignName
+      || !message
+
+      ) {
+        alert('Thiếu dữ liệu')
+    }
+
+    const campaign = await API.createCampaign(accessToken, campaignName, selectedPageID, pageMembers.length)
+    console.log("🚀 ~ file: Main.jsx ~ line 69 ~ sendMessages ~ campaign", campaign)
+    if (!campaign) {
       return;
     }
 

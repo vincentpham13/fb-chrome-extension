@@ -6,7 +6,6 @@ import styles from './Login.module.scss';
 /* eslint-disable-rule no-undef */
 const Login = (props) => {
   const { history } = props;
-  const [authenticated, setAuthenticated] = useState();
   const options = {
     type: "basic",
     title: "Facebook authentication",
@@ -41,33 +40,52 @@ const Login = (props) => {
     }, 500);
   }
 
-  const [userInfo, setUserInfo] = useState(null);
-  const [fbAccessToken, setFbAccessToken] = useState({});
+  const logout = () => {
+    chrome.storage.sync.set({
+      'FBaccessToken': null, function() {
+      }
+    });
+    chrome.storage.sync.set({
+      'FBuserInfo': null, function() {
+      }
+    });
+    history.push('/login');
+  }
+
+  const [fbAccessToken, setFbAccessToken] = useState();
 
   // Load fb access token
   useEffect(() => {
     chrome.storage.sync.get(['FBaccessToken'], function (data) {
-      setFbAccessToken(data?.FBaccessToken);
-    })
+      if (data?.FBaccessToken) {
+        console.log("🚀 ~ file: Login.jsx ~ line 64 ~ data?.FBaccessToken", data?.FBaccessToken)
+        setFbAccessToken(data?.FBaccessToken);
+      } else {
+        console.log('lgout');
+        // remove all tokens then naviage to login
+        logout();
+      }
+    });
   }, []);
 
   // Fetch users
   useEffect(() => {
     if (fbAccessToken) {
-      async function fetchUser() {
-        const user = await API.getUserInfo(fbAccessToken);
-        if (user) {
-          console.log("🚀 ~ file: App.js ~ line 34 ~ fetchUser ~ user", user)
+      async function checkValidFbToekenAndAccessToken() {
+        const fbuser = await API.getUserInfo(fbAccessToken);
+        if (fbuser) {
+          const user = await API.loginWithFbToken(fbuser.id, fbAccessToken);
           history.push({
             pathname: '/home',
             state: {
-              userInfo: user,
-              fbAccessToken
+              userInfo: fbuser,
+              fbAccessToken,
+              accessToken: user.accessToken,
             },
           })
         }
       }
-      fetchUser();
+      checkValidFbToekenAndAccessToken();
     }
   }, [fbAccessToken]);
 

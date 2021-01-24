@@ -14,7 +14,7 @@ const ProgressBar = ({
       className={cx(styles["progress-striped"], styles["progress"], styles[`${percent === 100 ? '' : 'progress-animate'}`])}
       {...rest}
     >
-      <span className={styles["bg-red"]} style={{ width: `${percent}%` }}>{percent < 100 ? `${percent}%` : 'Completed!'}</span>
+      <span className={styles["bg-red"]} style={{ width: `${percent}%` }}>{percent < 100 ? `${percent}%` : 'Hoàn tất!'}</span>
     </div>
   )
 }

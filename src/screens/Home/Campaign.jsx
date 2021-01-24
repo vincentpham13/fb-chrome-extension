@@ -16,13 +16,24 @@ const Campaign = (props) => {
 
   const {
     fbAccessToken,
+    accessToken,
   } = history.location.state || { fbAccessToken: 'rong' };
 
   const [fanpages, setFanpages] = useState([]);
   const [selectedPageID, setSelectedPageID] = useState(0);
+  const [campaignName, setCampaignName] = useState('');
+  const [message, setMessage] = useState('');
 
   const onSelectedPageChange = (e) => {
     setSelectedPageID(e.target.value);
+  }
+
+  const onCampaignNameChange = (e) => {
+    setCampaignName(e.target.value);
+  }
+
+  const onMessageChange = (e) => {
+    setMessage(e.target.value);
   }
 
   const reloadAllFanPages = async (e) => {
@@ -31,10 +42,18 @@ const Campaign = (props) => {
   }
 
   const gotoNextStep = () => {
+    if (!campaignName || !message || !selectedPageID) {
+      alert('Thiếu dữ liệu');
+      return;
+    }
+
     history.push({
       pathname: '/home/review',
       state: {
-        selectedPageID: selectedPageID,
+        message,
+        campaignName,
+        selectedPageID,
+        ...history.location.state,
       }
     })
   }
@@ -62,7 +81,12 @@ const Campaign = (props) => {
               Tạo chiến dịch
             </div>
             <div className={styles['input-text']}>
-              <input type="text" placeholder="Tên chiến dịch" />
+              <input
+                onChange={onCampaignNameChange}
+                value={campaignName}
+                type="text"
+                placeholder="Tên chiến dịch"
+              />
             </div>
           </section>
           <section className={styles["menu-item"]}>
@@ -96,7 +120,15 @@ const Campaign = (props) => {
               Tin nhắn
             </div>
             <div className={styles['input-text']}>
-              <textarea name="" id="" cols="30" rows="9" placeholder="Nội dung tin nhắn"></textarea>
+              <textarea
+                onChange={onMessageChange}
+                value={message}
+                name=""
+                id=""
+                cols="30"
+                rows="9"
+                placeholder="Nội dung tin nhắn"
+              ></textarea>
             </div>
           </section>
           <section className={styles["menu-item"]}>
