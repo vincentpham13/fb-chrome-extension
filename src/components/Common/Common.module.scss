@@ -6,6 +6,8 @@
     width: 60%;
     display: flex;
     align-items: center;
+    height: 50px;
+
     .user-image {
       height: 48px;
       width: 48px;
@@ -17,6 +19,12 @@
       font-size: 1.5rem;
       text-transform: capitalize;
       font-weight: 600;
+      margin-right: 18px;
+    }
+
+    .btn-exit {
+      max-height: 55%;
+      cursor: pointer;
     }
   }
 
@@ -44,6 +52,8 @@
 
 .btn-loading, .btn-normal {
   margin-top: 10px;
+  display: inline-block;
+
   button {
     display: inline-flex;
     align-items: center;

@@ -5,6 +5,7 @@ import API from '../../utils/Api';
 import { useSuccessMessage } from './hooks';
 
 import LoadingButton from '../../components/Common/LoadingButton';
+import NormalButton from '../../components/Common/NormalButton';
 import ProgressBar from '../../components/Common/ProgressBar';
 import styles from './Home.module.scss';
 import refreshIcon from '../../images/refresh-arrow.png';
@@ -13,28 +14,19 @@ const Main = (props) => {
   const {
     history,
   } = props;
+  const {
+    selectedPageID,
+  } = history.location.state || { selectedPageID: 1 };
 
   const [accessToken, setAccessToken] = useState({});
   const [sending, setSending] = useState(false);
 
-  const [selectedPageID, setSelectedPageID] = useState(0);
   const [pageMembers, setPageMembers] = useState([]);
 
   const [deliveredMessages, setDeliveredMessages] = useState([]);
   const deliveredMessage = useSuccessMessage();
 
   const [intervalMessageTime, setIntervalMessageTime] = useState(1);
-
-  const logout = () => {
-    chrome.storage.sync.set({
-      'FBaccessToken': null, function() {
-      }
-    });
-    chrome.storage.sync.set({
-      'FBuserInfo': null, function() {
-      }
-    });
-  }
 
   const decrementSecond = () => {
     if (intervalMessageTime > 1) {
@@ -89,6 +81,10 @@ const Main = (props) => {
     })
   }
 
+  const goBackToCampaign = () => {
+    history.goBack();
+  }
+
   // Fetch members
   useEffect(() => {
     setSending(false);
@@ -100,13 +96,6 @@ const Main = (props) => {
     fetchMembers();
   }, [selectedPageID]);
 
-  // Get userinfo
-  useEffect(() => {
-    chrome.storage.sync.get(['FBuserInfo', 'FBaccessToken'], function (data) {
-      setUserInfo(data?.FBuserInfo);
-      setAccessToken(data?.FBaccessToken);
-    })
-  }, []);
 
   useEffect(() => {
     if (deliveredMessage) {
@@ -140,32 +129,6 @@ const Main = (props) => {
     <>
       <div className={styles["home-wrapper"]}>
         <div className={styles["menu-group"]}>
-          <section className={styles["menu-item"]}>
-            <div className={styles["headline"]}>
-              Chọn Fanpage
-          </div>
-            <div className={styles["select-fanpage"]}>
-              <div className={styles["fanpage"]}>
-                <select
-                  onChange={onSelectedPageChange}
-                  className={styles["select-box"]}
-                >
-                  <option key={0} value={0}>Chọn Fanpage để gửi tin nhắn</option>
-                  {
-                    fanpages.map(fPage => (
-                      <option key={fPage.id} value={fPage.id}>{fPage.name}</option>
-                    ))
-                  }
-                </select>
-              </div>
-              <div
-                onClick={reloadAllFanPages}
-                className={styles["btn-reload"]}
-              >
-                <img src={refreshIcon} alt="" />
-              </div>
-            </div>
-          </section>
           <section className={styles["menu-item"]}>
             <div className={styles["headline"]}>
               Danh sách thành viên
@@ -212,16 +175,21 @@ const Main = (props) => {
                 >+</button>
               </div>
             </div>
-            <LoadingButton
-              onClick={sendMessages}
-              loading={sending}
-            />
             <ProgressBar
               percent={percent}
             />
           </section>
+          <section className={styles["menu-item"]}>
+            <LoadingButton
+              onClick={sendMessages}
+              loading={sending}
+            />
+            <NormalButton
+              onClick={goBackToCampaign}
+              title="Trở lại"
+            />
+          </section>
         </div>
-        <button onClick={logout}>Logout</button>
       </div>
     </>
   )

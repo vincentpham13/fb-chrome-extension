@@ -60,7 +60,10 @@ const Login = (props) => {
           console.log("🚀 ~ file: App.js ~ line 34 ~ fetchUser ~ user", user)
           history.push({
             pathname: '/home',
-            state: { userInfo: user },
+            state: {
+              userInfo: user,
+              fbAccessToken
+            },
           })
         }
       }

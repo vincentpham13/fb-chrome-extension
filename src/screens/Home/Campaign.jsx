@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, useRouteMatch } from 'react-router-dom';
 
 import API from '../../utils/Api';
 
@@ -12,6 +12,8 @@ const Campaign = (props) => {
   const {
     history,
   } = props;
+  let { path, url } = useRouteMatch();
+
   const {
     fbAccessToken,
   } = history.location.state || { fbAccessToken: 'rong' };
@@ -94,14 +96,16 @@ const Campaign = (props) => {
               Tin nhắn
             </div>
             <div className={styles['input-text']}>
-              <textarea name="" id="" cols="30" rows="10" placeholder="Nội dung tin nhắn"></textarea>
+              <textarea name="" id="" cols="30" rows="9" placeholder="Nội dung tin nhắn"></textarea>
             </div>
           </section>
-          <NormalButton
-            disabled={!selectedPageID}
-            onClick={gotoNextStep}
-            title="Next"
-          />
+          <section className={styles["menu-item"]}>
+            <NormalButton
+              disabled={!selectedPageID}
+              onClick={gotoNextStep}
+              title="Next"
+            />
+          </section>
         </div>
       </div>
     </>

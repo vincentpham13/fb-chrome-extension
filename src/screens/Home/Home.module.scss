@@ -7,6 +7,8 @@
 
       &:last-child {
         border-bottom: none;
+        display: flex;
+        justify-content: space-between;
       }
 
       .headline {
@@ -151,7 +153,7 @@
         }
         tbody {
           display: block;
-          height: 10.678rem;
+          height: 16.125rem;
           overflow: auto;
         }
         td {
