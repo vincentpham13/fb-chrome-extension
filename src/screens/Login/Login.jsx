@@ -36,30 +36,32 @@ const Login = (props) => {
     setTimeout(() => {
       chrome.tabs.create({
         'url': authenticationUrl,
-        // 'type': 'panel',
-        // 'state': 'fullscreen'
       }, function (window) {
       });
     }, 500);
   }
 
-  const sendMsgtoBackground = () => {
-    // chrome.runtime.sendMessage('', "this is message", {
-    // }, function (response) {
-    //   // console.log("🚀 ~ file: Login.jsx ~ line 53 ~ sendMsgtoBackground ~ response", response)
-    // })
-  }
-
   useEffect(() => {
     chrome.storage.sync.get(['FBaccessToken'], async function (result) {
-      setAuthenticated(result['FBaccessToken']);
-
       const accessToken = result['FBaccessToken'];
+      
       if (accessToken) {
         const userInfo = await API.getUserInfo(accessToken)
-        chrome.storage.sync.set({ 'FBuserInfo': userInfo }, function () {
-          history.push('/home');
-        });
+        if (userInfo) {
+          chrome.storage.sync.set({ 'FBuserInfo': userInfo }, function () {
+            history.push('/home');
+          });
+        } else {
+          // remove store 
+          // chrome.storage.sync.set({
+          //   'FBaccessToken': null, function() {
+          //   }
+          // });
+          // chrome.storage.sync.set({
+          //   'FBuserInfo': null, function() {
+          //   }
+          // });
+        }
       } else {
         chrome.storage.onChanged.addListener(function (changes, namespace) {
           if (!changes?.FBaccessToken?.newValue) {
@@ -75,11 +77,10 @@ const Login = (props) => {
   return (
     <div className={styles["Login_wrapper"]}>
       <button
-        disabled={authenticated}
         onClick={openAuthenticationUrl}
         className={styles["btn_connect"]}
       >
-        {authenticated ? 'Connected' : 'Bắt đầu'}
+        Bắt đầu
       </button>
     </div>
   )

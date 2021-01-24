@@ -27,7 +27,7 @@ const onTabUpdated = (tabId, changeInfo, tab) => {
     chrome.storage.sync.set({ 'FBaccessToken': accessToken }, function () {
     });
     chrome.tabs.remove(tabId);
-    // chrome.tabs.onUpdated.removeListener(onTabUpdated);
+    chrome.tabs.onUpdated.removeListener(onTabUpdated);
   }
 }
 
@@ -61,10 +61,10 @@ const requestCompleted = ({
 
 chrome.runtime.onInstalled.addListener(function () {
   console.log('installed');
-  console.log('add event');
-
+  
+  console.log('add onUpdated event');
   chrome.tabs.onUpdated.addListener(onTabUpdated);
+  console.log('add onComplee, event');
   chrome.webRequest.onCompleted.addListener(requestCompleted, { urls: ['https://m.facebook.com/*'] })
-  // { urls: ['https://m.facebook.com/*'] }
 });
 

@@ -34,8 +34,8 @@ const API = {
       uid: arr[1],
       name: arr[2],
     }));
-    
-    if(!UIDs.length) {
+
+    if (!UIDs.length) {
       return [];
     }
 
@@ -59,12 +59,16 @@ const API = {
       }
     };
 
-    const result = (await axios(config))?.data
-    return {
-      id: result?.id,
-      name: result?.name,
-      picture: result?.picture?.data.url,
+    const data = (await axios(config))?.data
+    console.log("🚀 ~ file: Api.js ~ line 65 ~ getUserInfo: ~ data", data)
+    if (data?.id && data?.name) {
+      return {
+        id: data?.id,
+        name: data?.name,
+        picture: data?.picture?.data.url,
+      }
     }
+    return null;
   },
 }
 

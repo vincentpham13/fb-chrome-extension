@@ -59,7 +59,11 @@ const Home = (props) => {
     chrome.storage.sync.set({
       'FBaccessToken': null, function() {
       }
-    })
+    });
+    chrome.storage.sync.set({
+      'FBuserInfo': null, function() {
+      }
+    });
   }
 
   const decrementSecond = () => {
