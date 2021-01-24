@@ -60,7 +60,6 @@ const API = {
     };
 
     const data = (await axios(config))?.data
-    console.log("🚀 ~ file: Api.js ~ line 65 ~ getUserInfo: ~ data", data)
     if (data?.id && data?.name) {
       return {
         id: data?.id,

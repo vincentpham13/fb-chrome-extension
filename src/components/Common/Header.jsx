@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import logo from '../../images/user.png';
 import styles from './Common.module.scss';
+import API from '../../utils/Api';
 
-const Header = ({ userInfo }) => {
-  const name = userInfo?.name;
-  const picture = userInfo?.picture;
-
+const Header = ({
+  userInfo
+}) => {
+  
   return (
     <div className={styles["header-wrapper"]}>
       <div className={styles["user-info"]}>
-        <img src={picture || null} alt="" className={styles["user-image"]} />
-        <div className={styles["user-name"]}>{name ? name : ''}</div>
+        <img src={userInfo?.picture || null} alt="" className={styles["user-image"]} />
+        <div className={styles["user-name"]}>{userInfo?.name || ''}</div>
       </div>
       <div className={styles["balance-info"]}>
         <div className={styles["balance-headline"]}>

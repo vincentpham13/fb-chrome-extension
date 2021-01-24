@@ -3,7 +3,7 @@ import cx from 'classnames';
 
 import styles from './Common.module.scss';
 
-const Button = ({
+const LoadingButton = ({
   loading,
   ...rest
 }) => {
@@ -21,4 +21,4 @@ const Button = ({
   )
 }
 
-export default Button;
+export default LoadingButton;

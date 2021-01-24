@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 
-import API from '../utils/Api';
+import API from '../../utils/Api';
 import styles from './Login.module.scss';
 /* eslint-disable-rule no-undef */
 const Login = (props) => {
@@ -41,38 +41,32 @@ const Login = (props) => {
     }, 500);
   }
 
-  useEffect(() => {
-    chrome.storage.sync.get(['FBaccessToken'], async function (result) {
-      const accessToken = result['FBaccessToken'];
-      
-      if (accessToken) {
-        const userInfo = await API.getUserInfo(accessToken)
-        if (userInfo) {
-          chrome.storage.sync.set({ 'FBuserInfo': userInfo }, function () {
-            history.push('/home');
-          });
-        } else {
-          // remove store 
-          // chrome.storage.sync.set({
-          //   'FBaccessToken': null, function() {
-          //   }
-          // });
-          // chrome.storage.sync.set({
-          //   'FBuserInfo': null, function() {
-          //   }
-          // });
-        }
-      } else {
-        chrome.storage.onChanged.addListener(function (changes, namespace) {
-          if (!changes?.FBaccessToken?.newValue) {
-            setAuthenticated(false);
-          }
-        });
-      }
+  const [userInfo, setUserInfo] = useState(null);
+  const [fbAccessToken, setFbAccessToken] = useState({});
 
-      return () => chrome.storage.onChanged.removeListener()
+  // Load fb access token
+  useEffect(() => {
+    chrome.storage.sync.get(['FBaccessToken'], function (data) {
+      setFbAccessToken(data?.FBaccessToken);
     })
   }, []);
+
+  // Fetch users
+  useEffect(() => {
+    if (fbAccessToken) {
+      async function fetchUser() {
+        const user = await API.getUserInfo(fbAccessToken);
+        if (user) {
+          console.log("🚀 ~ file: App.js ~ line 34 ~ fetchUser ~ user", user)
+          history.push({
+            pathname: '/home',
+            state: { userInfo: user },
+          })
+        }
+      }
+      fetchUser();
+    }
+  }, [fbAccessToken]);
 
   return (
     <div className={styles["Login_wrapper"]}>
