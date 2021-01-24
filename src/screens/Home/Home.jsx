@@ -38,6 +38,9 @@ const Home = (props) => {
         <Route path={`${path}/campaign`}>
           <Campaign />
         </Route>
+        <Route path={`${path}/review`}>
+          <Main />
+        </Route>
       </Switch>
     </Router>
   )

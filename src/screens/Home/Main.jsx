@@ -6,7 +6,6 @@ import { useSuccessMessage } from './hooks';
 
 import LoadingButton from '../../components/Common/LoadingButton';
 import ProgressBar from '../../components/Common/ProgressBar';
-import Header from "../../components/Common/Header";
 import styles from './Home.module.scss';
 import refreshIcon from '../../images/refresh-arrow.png';
 
@@ -18,7 +17,6 @@ const Main = (props) => {
   const [accessToken, setAccessToken] = useState({});
   const [sending, setSending] = useState(false);
 
-  const [fanpages, setFanpages] = useState([]);
   const [selectedPageID, setSelectedPageID] = useState(0);
   const [pageMembers, setPageMembers] = useState([]);
 
@@ -101,21 +99,6 @@ const Main = (props) => {
     }
     fetchMembers();
   }, [selectedPageID]);
-
-  // Fetch fanpages
-  useEffect(() => {
-    chrome.storage.onChanged.addListener(function (changes, namespace) {
-      if (!changes?.FBaccessToken?.newValue) {
-        history.push('/');
-      }
-    });
-    async function fetchFanpages() {
-      await API.getUserInfo(accessToken);
-      const { data: pages } = await API.getFanpages(accessToken);
-      setFanpages(pages);
-    }
-    fetchFanpages();
-  }, [accessToken]);
 
   // Get userinfo
   useEffect(() => {
