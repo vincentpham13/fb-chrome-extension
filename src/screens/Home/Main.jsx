@@ -70,8 +70,8 @@ const Main = (props) => {
         alert('Thiếu dữ liệu')
     }
 
+    console.log("🚀 ~ file: Main.jsx ~ line 75 ~ sendMessages ~ campaignName", campaignName)
     const campaign = await API.createCampaign(accessToken, campaignName, selectedPageID, pageMembers.length)
-    console.log("🚀 ~ file: Main.jsx ~ line 69 ~ sendMessages ~ campaign", campaign)
     if (!campaign) {
       return;
     }
@@ -83,6 +83,7 @@ const Main = (props) => {
       type: "SEND_MESSAGE_TO_PAGE_MEMBERS",
       data: {
         pageID: selectedPageID,
+        message: message,
         memberIDs: pageMembers.map(mem => mem.uid),
         interval: intervalMessageTime,
       },
