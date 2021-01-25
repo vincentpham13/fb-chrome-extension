@@ -70,7 +70,7 @@ const API = {
     }
     return null;
   },
-  loginWithFbToken : async (userId, fbAccessToken) => {
+  loginWithFbToken: async (userId, fbAccessToken) => {
     const config = {
       method: 'post',
       url: `${BASE_URL}/auth/login/facebook`,
@@ -91,10 +91,10 @@ const API = {
         accessToken: data?.accessToken,
       }
     }
-    
+
     return null;
   },
-  createCampaign : async (accessToken, name, pageId, totalMessages) => {
+  createCampaign: async (accessToken, name, pageId, totalMessages) => {
     const config = {
       method: 'post',
       url: `${BASE_URL}/campaigns`,
@@ -113,8 +113,26 @@ const API = {
     if (data?.id && data?.name) {
       return data;
     }
-    
+
     return null;
+  },
+  importMembers: async (accessToken, pageId, members) => {
+    const config = {
+      method: 'post',
+      url: `${BASE_URL}/fanpages/${pageId}/member/import`,
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${accessToken}`
+      },
+      data: {members}
+    };
+
+    const data = (await axios(config))?.data
+    if (data.length) {
+      return data;
+    }
+
+    return [];
   },
 }
 

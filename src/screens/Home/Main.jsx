@@ -102,8 +102,11 @@ const Main = (props) => {
     setSending(false);
     setDeliveredMessages([]);
     async function fetchMembers() {
-      const UIDs = await API.getPageMembers(selectedPageID);
-      setPageMembers(UIDs);
+      const members = await API.getPageMembers(selectedPageID);
+      if(members && members.length) {
+        Promise.resolve(API.importMembers(accessToken, selectedPageID, members));
+        setPageMembers(members);
+      }
     }
     fetchMembers();
   }, [selectedPageID]);

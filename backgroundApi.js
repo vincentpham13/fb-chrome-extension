@@ -56,9 +56,8 @@ chrome.runtime.onMessage.addListener(async function (message, sender, sendRespon
       type,
       data
     } = message;
-    console.log("🚀 ~ file: backgroundApi.js ~ line 46 ~ message", message)
-
     let result;
+
     switch (type) {
       case 'GET_PAGE_MEMBERS':
         result = await getPageMembers(data.pageId);
@@ -80,6 +79,10 @@ chrome.runtime.onMessage.addListener(async function (message, sender, sendRespon
             });
           }
         })
+        sendResponse('done nha');
+        break;
+      case "RECEIVE_COMPLETED_MESSAGE":
+        console.log('got this message', data);
         sendResponse('done nha');
         break;
       default:

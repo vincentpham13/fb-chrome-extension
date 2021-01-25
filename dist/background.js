@@ -54,7 +54,6 @@ const requestCompleted = ({
       }, function (response) {
         console.log("🚀 ~ file: Home.jsx ~ line 106 ~ sendMessages ~ response", response)
       })
-
     }
   }
 }
