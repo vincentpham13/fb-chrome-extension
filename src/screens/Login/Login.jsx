@@ -15,7 +15,7 @@ const Login = (props) => {
 
   const successURL = 'https://www.facebook.com/connect/login_success.html';
   const path = 'https://www.facebook.com/v9.0/dialog/oauth?';
-  const appID = '1263314497389233';
+  const appID = '265010030625004';
   const queryParams = [
     'client_id=' + appID,
     // 'auth_type=rerequest',
@@ -58,7 +58,6 @@ const Login = (props) => {
   useEffect(() => {
     chrome.storage.sync.get(['FBaccessToken'], function (data) {
       if (data?.FBaccessToken) {
-        console.log("🚀 ~ file: Login.jsx ~ line 64 ~ data?.FBaccessToken", data?.FBaccessToken)
         setFbAccessToken(data?.FBaccessToken);
       } else {
         console.log('lgout');
@@ -75,14 +74,22 @@ const Login = (props) => {
         const fbuser = await API.getUserInfo(fbAccessToken);
         if (fbuser) {
           const user = await API.loginWithFbToken(fbuser.id, fbAccessToken);
-          history.push({
-            pathname: '/home',
-            state: {
-              userInfo: fbuser,
-              fbAccessToken,
-              accessToken: user.accessToken,
-            },
-          })
+          console.log("🚀 ~ file: Login.jsx ~ line 77 ~ checkValidFbToekenAndAccessToken ~ user", user)
+          if (user) {
+            history.push({
+              pathname: '/home',
+              state: {
+                userInfo: fbuser,
+                fbAccessToken,
+                accessToken: user.accessToken,
+              },
+            });
+            chrome.storage.sync.set({
+              'accessToken': user.accessToken, function() {
+                console.log('setDone');
+              }
+            });
+          }
         }
       }
       checkValidFbToekenAndAccessToken();

@@ -1,7 +1,10 @@
 import Axios from 'axios';
 
 const BASE_URL = 'http://localhost:5000/api/v1';
+// const BASE_URL = 'https://api-extension.hana.ai/api/v1';
+
 const axios = Axios.create({
+  withCredentials: true,
 });
 
 const API = {
@@ -80,7 +83,8 @@ const API = {
       data: {
         fbUserId: userId,
         accessToken: fbAccessToken,
-      }
+      },
+      withCredentials: true
     };
 
     const data = (await axios(config))?.data
@@ -106,7 +110,8 @@ const API = {
         name,
         pageId,
         totalMessages,
-      }
+      },
+      withCredentials: true
     };
 
     const data = (await axios(config))?.data
@@ -124,7 +129,8 @@ const API = {
         'content-type': 'application/json',
         'authorization': `Bearer ${accessToken}`
       },
-      data: {members}
+      data: {members},
+      withCredentials: true
     };
 
     const data = (await axios(config))?.data

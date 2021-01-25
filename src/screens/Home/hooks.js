@@ -17,6 +17,7 @@ function useSuccessMessage() {
         default:
           break;
       }
+      sendResponse('default response');
     });
   }, [])
 

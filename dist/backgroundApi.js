@@ -3,54 +3,62 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 const executeRequests = function (tab, pageID, message, memberIDs = [], intervalTime) {
-  chrome.tabs.executeScript(tab.id, {
-    code: `
-    var myHeaders = new Headers();
-    myHeaders.append("authority", "m.facebook.com");
-    myHeaders.append("accept-language", "vi,en-US;q=0.9,en;q=0.8,vi-VN;q=0.7");
-    myHeaders.append("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
-
-    var memberIDs = [${memberIDs.join(',')}];
-    var dbsg = document.getElementsByName("fb_dtsg");
-    var fb_dtsg = dbsg[0].value;
-
-    function getFetchRequest(memberID) {
-      var raw = \`fb_dtsg=\${fb_dtsg}&jazoest=22088&body=${message}&tids=cid.c.\${memberID}%3A${pageID}&wwwupp=C3&ids%5B\${memberID}%5D=\${memberID}&referrer=&ctype=&cver=legacy&csid=aaeaa273-40fb-4bac-8d28-9be5aa1c8361&photo_ids%5B%5D=\`;
-
-      var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-      };
+  chrome.storage.sync.get(['accessToken'], function (data) {
+    if (data?.accessToken) {
+      console.log('co access token');
+      chrome.tabs.executeScript(tab.id, {
+        code: `
+        var myHeaders = new Headers();
+        myHeaders.append("authority", "m.facebook.com");
+        myHeaders.append("accept-language", "vi,en-US;q=0.9,en;q=0.8,vi-VN;q=0.7");
+        myHeaders.append("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
     
-      return fetch("https://m.facebook.com/messages/send/?icm=1&pageID=${pageID}&refid=12", requestOptions)
-       .then(response => response.text())
-       .then(result => console.log(result))
-       .catch(error => console.log('error', error));
+        var memberIDs = [${memberIDs.join(',')}];
+        var dbsg = document.getElementsByName("fb_dtsg");
+        var fb_dtsg = dbsg[0].value;
+    
+        function getFetchRequest(memberID) {
+          var raw = \`fb_dtsg=\${fb_dtsg}&jazoest=22088&body=${message}&tids=cid.c.\${memberID}%3A${pageID}&wwwupp=C3&ids%5B\${memberID}%5D=\${memberID}&referrer=&ctype=&cver=legacy&csid=aaeaa273-40fb-4bac-8d28-9be5aa1c8361&photo_ids%5B%5D=\`;
+    
+          var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+          };
+        
+          return fetch("https://m.facebook.com/messages/send/?icm=1&pageID=${pageID}&refid=12", requestOptions)
+           .then(response => response.text())
+           .then(result => console.log(result))
+           .catch(error => console.log('error', error));
+        }
+    
+        var reqIndex = 0;
+        var interval = setInterval(function() {
+          if (reqIndex === memberIDs.length) {
+            clearInterval(interval);
+            return;
+          }
+    
+          console.log('starting', reqIndex, new Date().toLocaleString());
+          getFetchRequest(memberIDs[reqIndex]);
+          reqIndex++;
+          console.log('done 1 cai');
+        }, ${intervalTime * 1000})
+        `
+        // fetch("https://m.facebook.com/messages/send/?icm=1&pageID=${pageID}&refid=12", requestOptions)
+        // .then(response => response.text())
+        // .then(result => console.log(result))
+        // .catch(error => console.log('error', error));
+      });
+    } else {
+      console.warn('Missing accesstoken to update remaining message')
     }
-
-    var reqIndex = 0;
-    var interval = setInterval(function() {
-      if (reqIndex === memberIDs.length) {
-        clearInterval(interval);
-        return;
-      }
-
-      console.log('starting', reqIndex, new Date().toLocaleString());
-      getFetchRequest(memberIDs[reqIndex]);
-      reqIndex++;
-      console.log('done 1 cai');
-    }, ${intervalTime * 1000})
-    `
-    // fetch("https://m.facebook.com/messages/send/?icm=1&pageID=${pageID}&refid=12", requestOptions)
-    // .then(response => response.text())
-    // .then(result => console.log(result))
-    // .catch(error => console.log('error', error));
   });
 }
 
 chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
+  console.log("🚀 ~ hj", message)
   try {
     const {
       type,
@@ -75,14 +83,12 @@ chrome.runtime.onMessage.addListener(async function (message, sender, sendRespon
               // 'type': 'panel',
               // 'state': 'fullscreen'
             }, function (tab) {
-              executeRequests(tab, data.pageID, data.memberIDs, data.interval);
+              executeRequests(tab, data.pageID, data.message, data.memberIDs, data.interval);
             });
           }
         })
         sendResponse('done nha');
         break;
-      case "RECEIVE_COMPLETED_MESSAGE":
-        console.log('got this message', data);
         sendResponse('done nha');
         break;
       default:
