@@ -1,11 +1,13 @@
 .header-wrapper {
   display: flex;
-  margin-bottom: 1rem;
-  
+  margin-bottom: 0.5em;
+
   .user-info {
     width: 60%;
     display: flex;
     align-items: center;
+    height: 50px;
+
     .user-image {
       height: 48px;
       width: 48px;
@@ -17,6 +19,12 @@
       font-size: 1.5rem;
       text-transform: capitalize;
       font-weight: 600;
+      margin-right: 18px;
+    }
+
+    .btn-exit {
+      max-height: 55%;
+      cursor: pointer;
     }
   }
 
@@ -29,16 +37,174 @@
     .balance-headline {
       flex: 1;
       font-size: 1rem;
-      color: #2F4858;
+      color: #2f4858;
       border-radius: 50%;
-      
     }
 
     .balance-ammount {
       font-size: 0.875rem;
       width: 35px;
-      color: #04AE34;
+      color: #04ae34;
       text-transform: capitalize;
+    }
+  }
+}
+
+.btn-loading, .btn-normal {
+  margin-top: 10px;
+  display: inline-block;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 40px;
+    min-width: 130px;
+    padding: 0 0.625rem;
+    border: none;
+    background-color: #04ae34;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+
+    .icon-send {
+      height: 25px;
+      width: 25px;
+      float: left;
+      background-image: url("../../images/send.png");
+      background-size: contain;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .icon-loading {
+      height: 25px;
+      width: 25px;
+      float: left;
+      background-image: url("../../images/loading.png");
+      background-size: contain;
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+@keyframes move {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+.progress {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding-bottom: 0;
+  background-color: #f9f9f9;
+  color: #fff;
+  box-shadow: inset 0 1px 1px rgba(100, 100, 100, 0.1);
+  box-sizing: initial;
+  font-size: 0.6875rem;
+  height: 12px;
+  line-height: 1.182;
+  margin: 0;
+  text-align: center;
+  width: 100%;
+  > span {
+    background-color: #04ae34;
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    width: auto;
+  }
+}
+.progress-small {
+  font-size: 9px;
+  font-size: 0.5625rem;
+  height: 6px;
+  line-height: 0.875;
+}
+.progress-large {
+  font-size: 16px;
+  font-size: 1rem;
+  height: 25px;
+  line-height: 1.7;
+}
+.progress.progress-stacked {
+  > span {
+    display: inline-block;
+    float: left;
+  }
+}
+.progress-striped {
+  > span {
+    &:after {
+      background-size: 50px 50px;
+      background-image: -webkit-gradient(
+        linear,
+        0 0,
+        100% 100%,
+        color-stop(0.25, rgba(255, 255, 255, 0.2)),
+        color-stop(0.25, transparent),
+        color-stop(0.5, transparent),
+        color-stop(0.5, rgba(255, 255, 255, 0.2)),
+        color-stop(0.75, rgba(255, 255, 255, 0.2)),
+        color-stop(0.75, transparent),
+        to(transparent)
+      );
+      bottom: 0;
+      content: "";
+      left: 0;
+      overflow: hidden;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 1;
+    }
+    > span {
+      background-size: 50px 50px;
+      background-image: -webkit-gradient(
+        linear,
+        0 0,
+        100% 100%,
+        color-stop(0.25, rgba(255, 255, 255, 0.2)),
+        color-stop(0.25, transparent),
+        color-stop(0.5, transparent),
+        color-stop(0.5, rgba(255, 255, 255, 0.2)),
+        color-stop(0.75, rgba(255, 255, 255, 0.2)),
+        color-stop(0.75, transparent),
+        to(transparent)
+      );
+      bottom: 0;
+      content: "";
+      left: 0;
+      overflow: hidden;
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 1;
+    }
+  }
+}
+.progress-striped.progress-animate {
+  > span {
+    &:after {
+      -webkit-animation: move 2s linear infinite;
+      animation: move 2s linear infinite;
+    }
+    > span {
+      -webkit-animation: move 2s linear infinite;
+      animation: move 2s linear infinite;
     }
   }
 }

@@ -1,14 +1,34 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { withRouter } from 'react-router-dom';
 
-import logo from '../../images/user.png';
 import styles from './Common.module.scss';
+import API from '../../utils/Api';
+import exitIcon from '../../images/exit.png';
 
-const Header = (props) => {
+
+const Header = ({
+  userInfo,
+  history
+}) => {
+
+  const logout = () => {
+    chrome.storage.sync.set({
+      'FBaccessToken': null, function() {
+      }
+    });
+    chrome.storage.sync.set({
+      'FBuserInfo': null, function() {
+      }
+    });
+    history.push('/login');
+  }
+
   return (
     <div className={styles["header-wrapper"]}>
       <div className={styles["user-info"]}>
-        <img src={logo} alt="" className={styles["user-image"]} />
-        <div className={styles["user-name"]}>Phạm Hoàng Minh Nhật</div>
+        <img src={userInfo?.picture || null} alt="" className={styles["user-image"]} />
+        <div className={styles["user-name"]}>{userInfo?.name || ''}</div>
+        <img onClick={logout} className={styles["btn-exit"]} src={exitIcon} alt="exit icon" />
       </div>
       <div className={styles["balance-info"]}>
         <div className={styles["balance-headline"]}>
@@ -23,4 +43,4 @@ const Header = (props) => {
   )
 }
 
-export default Header;
+export default withRouter(Header);

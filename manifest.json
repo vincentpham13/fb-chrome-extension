@@ -1,22 +1,22 @@
 {
   "manifest_version": 2,
-  "name": "Covid19",
+  "name": "VP Message",
   "version": "1.0.0",
-  "description": "Provides the cases details regarding Covid19 with respective to any Country",
+  "description": "Send multiple messages to your facebook users",
   "browser_action": {
     "default_popup": "index.html"
   },
   "icons": {
-    "16": "logo192.png"
+    "16": "logo.png"
   },
   "permissions": [
     "tabs",
     "windows",
-    "webRequest",
     "https://*/",
     "notifications",
     "background",
-    "storage"
+    "storage",
+    "webRequest"
   ],
   "content_security_policy": "script-src 'self' https://unpkg.com 'unsafe-eval' https://connect.facebook.net; object-src 'self'",
   "background": {
