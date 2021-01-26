@@ -11,13 +11,10 @@ import refreshIcon from '../../images/refresh-arrow.png';
 const Campaign = (props) => {
   const {
     history,
-  } = props;
-  let { path, url } = useRouteMatch();
-
-  const {
+    setDataTab1,
     fbAccessToken,
-    accessToken,
-  } = history.location.state || { fbAccessToken: 'rong' };
+    goNext,
+  } = props;
 
   const [fanpages, setFanpages] = useState([]);
   const [selectedPageID, setSelectedPageID] = useState(0);
@@ -25,15 +22,33 @@ const Campaign = (props) => {
   const [message, setMessage] = useState('');
 
   const onSelectedPageChange = (e) => {
-    setSelectedPageID(e.target.value);
+    const { value } = e.target;
+    if (value) {
+      setSelectedPageID(value);
+      setDataTab1({
+        selectedPageID: value
+      });
+    }
   }
 
   const onCampaignNameChange = (e) => {
-    setCampaignName(e.target.value);
+    const { value } = e.target;
+    if (value) {
+      setCampaignName(value);
+      setDataTab1({
+        campaignName: value
+      });
+    }
   }
 
   const onMessageChange = (e) => {
-    setMessage(e.target.value);
+    const { value } = e.target;
+    if (value) {
+      setMessage(value);
+      setDataTab1({
+        message: value
+      });
+    }
   }
 
   const reloadAllFanPages = async (e) => {
@@ -42,8 +57,9 @@ const Campaign = (props) => {
   }
 
   const gotoNextStep = () => {
+    goNext();
     if (!campaignName || !message || !selectedPageID) {
-      alert('Thiếu dữ liệu');
+      // alert('Thiếu dữ liệu');
       return;
     }
 
@@ -60,11 +76,6 @@ const Campaign = (props) => {
 
   // Fetch fanpages
   useEffect(() => {
-    // chrome.storage.onChanged.addListener(function (changes, namespace) {
-    //   if (!changes?.FBaccessToken?.newValue) {
-    //     history.push('/');
-    //   }
-    // });
     async function fetchFanpages() {
       const { data: pages } = await API.getFanpages(fbAccessToken);
       setFanpages(pages);
@@ -126,16 +137,16 @@ const Campaign = (props) => {
                 name=""
                 id=""
                 cols="30"
-                rows="9"
+                rows="8"
                 placeholder="Nội dung tin nhắn"
               ></textarea>
             </div>
           </section>
           <section className={styles["menu-item"]}>
             <NormalButton
-              disabled={!selectedPageID}
+              disabled={!selectedPageID || !campaignName || !message}
               onClick={gotoNextStep}
-              title="Next"
+              title="Kế tiếp"
             />
           </section>
         </div>

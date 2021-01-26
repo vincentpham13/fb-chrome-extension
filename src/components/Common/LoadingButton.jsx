@@ -1,6 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
 
+import { Spinner } from 'reactstrap';
 import styles from './Common.module.scss';
 
 const LoadingButton = ({
@@ -14,7 +15,12 @@ const LoadingButton = ({
         {...rest}
         disabled={loading}
       >
-        <span className={styles[`${loading ? 'icon-loading' : 'icon-send'}`]}></span>
+        {loading ? (
+          <Spinner color="light" />
+        ) : (
+            <span className={styles['icon-send']} />
+          )}
+
         {loading ? 'Đang gửi' : 'Gửi'}
       </button>
     </div>

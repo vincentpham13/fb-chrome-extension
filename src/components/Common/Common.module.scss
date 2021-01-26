@@ -1,6 +1,6 @@
 .header-wrapper {
   display: flex;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.7em;
 
   .user-info {
     width: 60%;
@@ -16,7 +16,7 @@
     }
 
     .user-name {
-      font-size: 1.5rem;
+      font-size: 1.15rem;
       text-transform: capitalize;
       font-weight: 600;
       margin-right: 18px;
@@ -58,14 +58,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: space-around;
-    height: 40px;
-    min-width: 130px;
+    height: 36px;
+    min-width: 110px;
     padding: 0 0.625rem;
     border: none;
     background-color: #04ae34;
     border-radius: 4px;
     color: #fff;
-    font-size: 18px;
+    font-size: 1rem;
     cursor: pointer;
 
     .icon-send {

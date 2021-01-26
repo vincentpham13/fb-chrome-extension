@@ -3,6 +3,8 @@ import { withRouter } from 'react-router-dom';
 
 import API from '../../utils/Api';
 import styles from './Login.module.scss';
+import Spinner from '../../components/Spinner/Spinner';
+
 /* eslint-disable-rule no-undef */
 const Login = (props) => {
   const { history } = props;
@@ -15,7 +17,7 @@ const Login = (props) => {
 
   const successURL = 'https://www.facebook.com/connect/login_success.html';
   const path = 'https://www.facebook.com/v9.0/dialog/oauth?';
-  const appID = '1263314497389233';
+  const appID = '265010030625004';
   const queryParams = [
     'client_id=' + appID,
     // 'auth_type=rerequest',
@@ -53,12 +55,12 @@ const Login = (props) => {
   }
 
   const [fbAccessToken, setFbAccessToken] = useState();
+  const [isChecking, setIsChecking] = useState(true);
 
   // Load fb access token
   useEffect(() => {
     chrome.storage.sync.get(['FBaccessToken'], function (data) {
       if (data?.FBaccessToken) {
-        console.log("🚀 ~ file: Login.jsx ~ line 64 ~ data?.FBaccessToken", data?.FBaccessToken)
         setFbAccessToken(data?.FBaccessToken);
       } else {
         console.log('lgout');
@@ -71,32 +73,43 @@ const Login = (props) => {
   // Fetch users
   useEffect(() => {
     if (fbAccessToken) {
+      setIsChecking(true);
       async function checkValidFbToekenAndAccessToken() {
         const fbuser = await API.getUserInfo(fbAccessToken);
         if (fbuser) {
           const user = await API.loginWithFbToken(fbuser.id, fbAccessToken);
-          history.push({
-            pathname: '/home',
-            state: {
-              userInfo: fbuser,
-              fbAccessToken,
-              accessToken: user.accessToken,
-            },
-          })
+          if (user) {
+            history.push({
+              pathname: '/home',
+              state: {
+                userInfo: fbuser,
+                fbAccessToken,
+                accessToken: user.accessToken,
+              },
+            });
+            chrome.storage.sync.set({
+              'accessToken': user.accessToken, function() {
+              }
+            });
+          }
         }
+        return setIsChecking(false);
       }
       checkValidFbToekenAndAccessToken();
+    } else {
+      setIsChecking(false);
     }
   }, [fbAccessToken]);
 
   return (
     <div className={styles["Login_wrapper"]}>
-      <button
+      {!isChecking ? (<button
         onClick={openAuthenticationUrl}
         className={styles["btn_connect"]}
       >
         Bắt đầu
-      </button>
+      </button>) : null}
+      <Spinner loading={isChecking} />
     </div>
   )
 }

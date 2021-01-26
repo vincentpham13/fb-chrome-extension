@@ -1,3 +1,6 @@
+const BASE_URL = 'http://localhost:5000/api/v1';
+// const BASE_URL = 'https://api-extension.hana.ai/api/v1';
+
 const successURL = 'https://www.facebook.com/connect/login_success.html';
 const options = {
   type: "basic",
@@ -20,6 +23,7 @@ const accessTokenFromSuccessURL = (url) => {
 }
 
 const onTabUpdated = (tabId, changeInfo, tab) => {
+  console.log("🚀 ~ file: background.js ~ line 27 ~ onTabUpdated ~ changeInfo.url", changeInfo.url)
   if (changeInfo.url && changeInfo.url.indexOf(successURL) === 0) {
     const accessToken = accessTokenFromSuccessURL(changeInfo.url);
     chrome.notifications.create(`fb-connect-success-${new Date().getTime()}`, options, (notificationId) => {
@@ -27,9 +31,32 @@ const onTabUpdated = (tabId, changeInfo, tab) => {
     chrome.storage.sync.set({ 'FBaccessToken': accessToken }, function () {
     });
     chrome.tabs.remove(tabId);
-    chrome.tabs.onUpdated.removeListener(onTabUpdated);
+    // chrome.tabs.onUpdated.removeListener(onTabUpdated);
   }
 }
+
+const updateMessageCount = (accessToken, campaignId, count = 1) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", `Bearer ${accessToken}`);
+
+  var raw = JSON.stringify({ "success": count });
+
+  var requestOptions = {
+    method: 'PUT',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(`${BASE_URL}/campaigns/${campaignId}`, requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
+let accessToken = '';
+let campaignId = '';
 
 const requestCompleted = ({
   url,
@@ -43,8 +70,7 @@ const requestCompleted = ({
 
     if (matched.length) {
       const [, UID, pageID] = matched[0];
-
-      chrome.runtime.sendMessage('', {
+      chrome.runtime.sendMessage(chrome.runtime.id, {
         type: "RECEIVE_COMPLETED_MESSAGE",
         data: {
           pageID: pageID,
@@ -52,16 +78,29 @@ const requestCompleted = ({
         },
       }, {
       }, function (response) {
-        console.log("🚀 ~ file: Home.jsx ~ line 106 ~ sendMessages ~ response", response)
+        // decide whether to make api
+        if (!response) {
+          console.log(campaignId, accessToken);
+          updateMessageCount(accessToken, campaignId, 1)
+        }
       })
-
     }
   }
 }
 
+console.log('add onChanged, event');
+chrome.storage.onChanged.addListener(function (changes, namespace) {
+  if (changes?.accessToken?.newValue) {
+    accessToken = changes?.accessToken?.newValue;
+  }
+  if (changes?.campaignId?.newValue) {
+    campaignId = changes?.campaignId?.newValue;
+  }
+});
+
 chrome.runtime.onInstalled.addListener(function () {
   console.log('installed');
-  
+
   console.log('add onUpdated event');
   chrome.tabs.onUpdated.addListener(onTabUpdated);
   console.log('add onComplee, event');

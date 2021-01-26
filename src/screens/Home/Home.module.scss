@@ -1,9 +1,15 @@
 .home-wrapper {
+  position: relative;
+
   .menu-group {
     .menu-item {
       width: 100%;
       padding: 0.875rem 0;
       border-bottom: 1px solid #d8d5d5;
+
+      &.item-vertical {
+        flex-direction: column;
+      }
 
       &:last-child {
         border-bottom: none;
@@ -153,12 +159,14 @@
         }
         tbody {
           display: block;
-          height: 16.125rem;
+          height: 14.125rem;
           overflow: auto;
         }
         td {
           border: 1px solid #ddd;
-          padding: 8px;
+          padding: 5px 6px;
+          font-size: 15px;
+          text-align: justify;
         }
         th {
           border: 1px solid #ddd;
@@ -203,6 +211,7 @@
             border-radius: 0;
             outline: none;
             box-sizing: border-box;
+            line-height: 34px;
           }
           button {
             height: 32px;
