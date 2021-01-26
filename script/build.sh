@@ -17,7 +17,6 @@ build() {
     # copy background script files to dist
     cp background.js dist/background.js
     cp backgroundApi.js dist/backgroundApi.js
-    cp backgroundMessage.js dist/backgroundMessage.js
 }
 
 build

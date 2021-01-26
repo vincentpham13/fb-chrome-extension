@@ -74,7 +74,6 @@ const Login = (props) => {
         const fbuser = await API.getUserInfo(fbAccessToken);
         if (fbuser) {
           const user = await API.loginWithFbToken(fbuser.id, fbAccessToken);
-          console.log("🚀 ~ file: Login.jsx ~ line 77 ~ checkValidFbToekenAndAccessToken ~ user", user)
           if (user) {
             history.push({
               pathname: '/home',
@@ -86,7 +85,6 @@ const Login = (props) => {
             });
             chrome.storage.sync.set({
               'accessToken': user.accessToken, function() {
-                console.log('setDone');
               }
             });
           }

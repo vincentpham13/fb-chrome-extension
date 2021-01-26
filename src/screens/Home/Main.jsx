@@ -19,14 +19,13 @@ const Main = (props) => {
     selectedPageID,
     accessToken,
   } = history.location.state || { selectedPageID: 1 };
-  console.log("🚀 ~ file: Main.jsx ~ line 20 ~ Main ~ history.location.state", history.location.state)
-
   const [sending, setSending] = useState(false);
 
   const [pageMembers, setPageMembers] = useState([]);
 
+  const [campaign, setCampaign] = useState();
+
   const [deliveredMessages, setDeliveredMessages] = useState([]);
-  const deliveredMessage = useSuccessMessage();
 
   const [intervalMessageTime, setIntervalMessageTime] = useState(1);
 
@@ -66,19 +65,23 @@ const Main = (props) => {
       || !campaignName
       || !message
 
-      ) {
-        alert('Thiếu dữ liệu')
+    ) {
+      alert('Thiếu dữ liệu')
     }
 
-    console.log("🚀 ~ file: Main.jsx ~ line 75 ~ sendMessages ~ campaignName", campaignName)
     const campaign = await API.createCampaign(accessToken, campaignName, selectedPageID, pageMembers.length)
     if (!campaign) {
       return;
     }
 
+    setCampaign(campaign);
     setSending(true);
     setDeliveredMessages([]);
-
+    chrome.storage.sync.set({
+      'campaignId': campaign.id, function() {
+        console.log("🚀 ~ file: Main.jsx ~ line 81 ~ sendMessages ~ campaign.id", campaign.id)
+      }
+    });
     chrome.runtime.sendMessage('', {
       type: "SEND_MESSAGE_TO_PAGE_MEMBERS",
       data: {
@@ -103,7 +106,7 @@ const Main = (props) => {
     setDeliveredMessages([]);
     async function fetchMembers() {
       const members = await API.getPageMembers(selectedPageID);
-      if(members && members.length) {
+      if (members && members.length) {
         Promise.resolve(API.importMembers(accessToken, selectedPageID, members));
         setPageMembers(members);
       }
@@ -111,6 +114,7 @@ const Main = (props) => {
     fetchMembers();
   }, [selectedPageID]);
 
+  const deliveredMessage = useSuccessMessage(accessToken, campaign?.id);
 
   useEffect(() => {
     if (deliveredMessage) {
@@ -123,7 +127,7 @@ const Main = (props) => {
         if (!deliveredMessages.includes(memberID)) {
           setDeliveredMessages([
             ...deliveredMessages,
-            memberID
+            memberID,
           ]);
         } else {
           console.warn('Duplicated completed message under memberID:', memberID);

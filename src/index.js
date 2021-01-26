@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+
 import './fonts/Roboto-Bold.ttf';
 import './fonts/Roboto-Medium.ttf';
 import './fonts/Roboto-Light.ttf';
 import './fonts/Roboto-ThinItalic.ttf';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
   <React.StrictMode>

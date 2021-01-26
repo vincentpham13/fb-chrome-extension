@@ -1,25 +1,29 @@
 import React, { useEffect, useState } from 'react';
+import API from '../../utils/Api';
 
-function useSuccessMessage() {
+function useSuccessMessage(accessToken, campaignId) {
   const [successMessage, setSuccessMessage] = useState();
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-      const {
-        type,
-        data,
-      } = message;
+    if (accessToken && campaignId) {
+      chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
+        const {
+          type,
+          data,
+        } = message;
 
-      switch (type) {
-        case "RECEIVE_COMPLETED_MESSAGE":
-          setSuccessMessage(data);
-          break;
-        default:
-          break;
-      }
-      sendResponse('default response');
-    });
-  }, [])
+        switch (type) {
+          case "RECEIVE_COMPLETED_MESSAGE":
+            setSuccessMessage(data);
+            await API.updateMessageCount(accessToken, campaignId, 1);
+            break;
+          default:
+            break;
+        }
+        sendResponse('Submited on foreground, background just ignore this');
+      });
+    }
+  }, [accessToken, campaignId])
 
   return successMessage;
 }

@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
-const BASE_URL = 'http://localhost:5000/api/v1';
-// const BASE_URL = 'https://api-extension.hana.ai/api/v1';
+// const BASE_URL = 'http://localhost:5000/api/v1';
+const BASE_URL = 'https://api-extension.hana.ai/api/v1';
 
 const axios = Axios.create({
   withCredentials: true,
@@ -121,6 +121,23 @@ const API = {
 
     return null;
   },
+  updateMessageCount: async (accessToken, campaignId, count = 1) => {
+    const config = {
+      method: 'put',
+      url: `${BASE_URL}/campaigns/${campaignId}`,
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${accessToken}`
+      },
+      data: {
+        success: count
+      },
+      withCredentials: true
+    };
+
+    const data = (await axios(config))?.data
+    return data;
+  },
   importMembers: async (accessToken, pageId, members) => {
     const config = {
       method: 'post',
@@ -129,7 +146,7 @@ const API = {
         'content-type': 'application/json',
         'authorization': `Bearer ${accessToken}`
       },
-      data: {members},
+      data: { members },
       withCredentials: true
     };
 
