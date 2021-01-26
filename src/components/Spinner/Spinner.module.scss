@@ -1,0 +1,20 @@
+.spinner {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 100000;
+  background: #f0f8ff8a;
+
+  .ic-loading {
+    position: absolute;
+    top: calc(50% - 1rem);
+    left: calc(50% - 1rem);
+  }
+
+  &.active {
+    display: block;
+  }
+}
