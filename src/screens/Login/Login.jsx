@@ -3,6 +3,8 @@ import { withRouter } from 'react-router-dom';
 
 import API from '../../utils/Api';
 import styles from './Login.module.scss';
+import Spinner from '../../components/Spinner/Spinner';
+
 /* eslint-disable-rule no-undef */
 const Login = (props) => {
   const { history } = props;
@@ -53,6 +55,7 @@ const Login = (props) => {
   }
 
   const [fbAccessToken, setFbAccessToken] = useState();
+  const [isChecking, setIsChecking] = useState(true);
 
   // Load fb access token
   useEffect(() => {
@@ -70,6 +73,7 @@ const Login = (props) => {
   // Fetch users
   useEffect(() => {
     if (fbAccessToken) {
+      setIsChecking(true);
       async function checkValidFbToekenAndAccessToken() {
         const fbuser = await API.getUserInfo(fbAccessToken);
         if (fbuser) {
@@ -89,19 +93,23 @@ const Login = (props) => {
             });
           }
         }
+        return setIsChecking(false);
       }
       checkValidFbToekenAndAccessToken();
+    } else {
+      setIsChecking(false);
     }
   }, [fbAccessToken]);
 
   return (
     <div className={styles["Login_wrapper"]}>
-      <button
+      {!isChecking ? (<button
         onClick={openAuthenticationUrl}
         className={styles["btn_connect"]}
       >
         Bắt đầu
-      </button>
+      </button>) : null}
+      <Spinner loading={isChecking} />
     </div>
   )
 }

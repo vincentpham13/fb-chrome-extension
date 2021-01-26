@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
-// const BASE_URL = 'http://localhost:5000/api/v1';
-const BASE_URL = 'https://api-extension.hana.ai/api/v1';
+const BASE_URL = 'http://localhost:5000/api/v1';
+// const BASE_URL = 'https://api-extension.hana.ai/api/v1';
 
 const axios = Axios.create({
   withCredentials: true,
@@ -9,6 +9,7 @@ const axios = Axios.create({
 
 const API = {
   getFanpages: async (accessToken) => {
+    console.log('Leila Vaughn')
     const config = {
       method: 'get',
       url: `https://graph.facebook.com/me/accounts?fields=name,access_token&limit=100&access_token=${accessToken}`,
@@ -20,7 +21,27 @@ const API = {
     };
     return (await axios(config)).data;
   },
+  getSyncedFanpages: async (accessToken) => {
+    console.log('Della Duncan')
+    const config = {
+      method: 'GET',
+      url: `${BASE_URL}/fanpages`,
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${accessToken}`
+      },
+      withCredentials: true
+    };
+
+    const data = (await axios(config))?.data
+    if (data.length) {
+      return data;
+    }
+
+    return [];
+  },
   getPageMembers: async (pageID, nextUrl) => {
+    console.log('Annie Rice')
     const config = {
       method: 'get',
       url: !nextUrl ? `https://mbasic.facebook.com/messages/?pageID=${pageID}` : nextUrl,
@@ -52,6 +73,7 @@ const API = {
     ] : UIDs;
   },
   getUserInfo: async (accessToken) => {
+    console.log('Cody Perez')
     const config = {
       method: 'get',
       url: `https://graph.facebook.com/v9.0/me?access_token=${accessToken}&debug=all&fields=name%2Cpicture&format=json&method=get&pretty=0&suppress_http_code=1&transport=cors`,
@@ -74,6 +96,7 @@ const API = {
     return null;
   },
   loginWithFbToken: async (userId, fbAccessToken) => {
+    console.log('Gerald Castillo')
     const config = {
       method: 'post',
       url: `${BASE_URL}/auth/login/facebook`,
@@ -99,6 +122,7 @@ const API = {
     return null;
   },
   createCampaign: async (accessToken, name, pageId, totalMessages) => {
+    console.log('Lela Briggs')
     const config = {
       method: 'post',
       url: `${BASE_URL}/campaigns`,
@@ -122,6 +146,7 @@ const API = {
     return null;
   },
   updateMessageCount: async (accessToken, campaignId, count = 1) => {
+    console.log('Marie Rhodes')
     const config = {
       method: 'put',
       url: `${BASE_URL}/campaigns/${campaignId}`,
@@ -139,6 +164,7 @@ const API = {
     return data;
   },
   importMembers: async (accessToken, pageId, members) => {
+    console.log('Lucille Brooks')
     const config = {
       method: 'post',
       url: `${BASE_URL}/fanpages/${pageId}/member/import`,
@@ -147,6 +173,25 @@ const API = {
         'authorization': `Bearer ${accessToken}`
       },
       data: { members },
+      withCredentials: true
+    };
+
+    const data = (await axios(config))?.data
+    if (data.length) {
+      return data;
+    }
+
+    return [];
+  },
+  getPageCampaigns: async (accessToken, pageId) => {
+    console.log('Nathaniel Holt')
+    const config = {
+      method: 'GET',
+      url: `${BASE_URL}/fanpages/${pageId}/campaigns`,
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${accessToken}`
+      },
       withCredentials: true
     };
 

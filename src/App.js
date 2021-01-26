@@ -21,7 +21,7 @@ function App() {
           path="/"
           render={() => {
             return (
-              <Redirect to="/test" />
+              <Redirect to="/login" />
             )
           }}
         />
@@ -36,7 +36,6 @@ function App() {
         </Route>
       </Switch>
     </Router>
-
   );
 }
 

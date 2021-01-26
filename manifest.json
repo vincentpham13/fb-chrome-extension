@@ -22,8 +22,7 @@
   "background": {
     "scripts": [
       "background.js",
-      "backgroundApi.js",
-      "backgroundMessage.js"
+      "backgroundApi.js"
     ],
     "persistent": true
   }

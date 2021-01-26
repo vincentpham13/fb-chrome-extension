@@ -1,5 +1,5 @@
-// const BASE_URL = 'http://localhost:5000/api/v1';
-const BASE_URL = 'https://api-extension.hana.ai/api/v1';
+const BASE_URL = 'http://localhost:5000/api/v1';
+// const BASE_URL = 'https://api-extension.hana.ai/api/v1';
 
 const successURL = 'https://www.facebook.com/connect/login_success.html';
 const options = {
@@ -23,6 +23,7 @@ const accessTokenFromSuccessURL = (url) => {
 }
 
 const onTabUpdated = (tabId, changeInfo, tab) => {
+  console.log("🚀 ~ file: background.js ~ line 27 ~ onTabUpdated ~ changeInfo.url", changeInfo.url)
   if (changeInfo.url && changeInfo.url.indexOf(successURL) === 0) {
     const accessToken = accessTokenFromSuccessURL(changeInfo.url);
     chrome.notifications.create(`fb-connect-success-${new Date().getTime()}`, options, (notificationId) => {
@@ -30,7 +31,7 @@ const onTabUpdated = (tabId, changeInfo, tab) => {
     chrome.storage.sync.set({ 'FBaccessToken': accessToken }, function () {
     });
     chrome.tabs.remove(tabId);
-    chrome.tabs.onUpdated.removeListener(onTabUpdated);
+    // chrome.tabs.onUpdated.removeListener(onTabUpdated);
   }
 }
 
@@ -78,7 +79,7 @@ const requestCompleted = ({
       }, {
       }, function (response) {
         // decide whether to make api
-        if(!response) {
+        if (!response) {
           console.log(campaignId, accessToken);
           updateMessageCount(accessToken, campaignId, 1)
         }

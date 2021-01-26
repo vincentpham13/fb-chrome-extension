@@ -12,13 +12,15 @@ import styles from './Home.module.scss';
 const Main = (props) => {
   const {
     history,
-  } = props;
-  const {
-    message,
-    campaignName,
-    selectedPageID,
+    goBack,
     accessToken,
-  } = history.location.state || { selectedPageID: 1 };
+    setLoading,
+    tab1Data: {
+      selectedPageID,
+      campaignName,
+      message,
+    }
+  } = props;
   const [sending, setSending] = useState(false);
 
   const [pageMembers, setPageMembers] = useState([]);
@@ -97,21 +99,27 @@ const Main = (props) => {
   }
 
   const goBackToCampaign = () => {
-    history.goBack();
+    goBack();
   }
 
   // Fetch members
   useEffect(() => {
-    setSending(false);
-    setDeliveredMessages([]);
-    async function fetchMembers() {
-      const members = await API.getPageMembers(selectedPageID);
-      if (members && members.length) {
-        Promise.resolve(API.importMembers(accessToken, selectedPageID, members));
-        setPageMembers(members);
+    if (selectedPageID) {
+      setLoading(true);
+      console.log(selectedPageID)
+      setSending(false);
+      setDeliveredMessages([]);
+      async function fetchMembers() {
+        const members = await API.getPageMembers(selectedPageID);
+        if (members && members.length) {
+          Promise.resolve(API.importMembers(accessToken, selectedPageID, members));
+          setPageMembers(members);
+        }
+        setLoading(false);
       }
+      fetchMembers();
     }
-    fetchMembers();
+
   }, [selectedPageID]);
 
   const deliveredMessage = useSuccessMessage(accessToken, campaign?.id);
@@ -155,16 +163,16 @@ const Main = (props) => {
             <table className={styles["page-members"]}>
               <thead>
                 <tr>
-                  <th>Tên</th>
                   <th>UID</th>
+                  <th>Tên người chat</th>
                 </tr>
               </thead>
               <tbody>
                 {
                   pageMembers.map(member => (
                     <tr key={member.uid}>
-                      <td>{member.name}</td>
                       <td>{member.uid}</td>
+                      <td>{member.name}</td>
                     </tr>
                   ))
                 }
@@ -199,13 +207,13 @@ const Main = (props) => {
             />
           </section>
           <section className={styles["menu-item"]}>
-            <LoadingButton
-              onClick={sendMessages}
-              loading={sending}
-            />
             <NormalButton
               onClick={goBackToCampaign}
               title="Trở lại"
+            />
+            <LoadingButton
+              onClick={sendMessages}
+              loading={sending}
             />
           </section>
         </div>

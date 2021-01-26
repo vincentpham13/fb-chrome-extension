@@ -8,9 +8,9 @@ import './fonts/Roboto-Bold.ttf';
 import './fonts/Roboto-Medium.ttf';
 import './fonts/Roboto-Light.ttf';
 import './fonts/Roboto-ThinItalic.ttf';
-import './index.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>
