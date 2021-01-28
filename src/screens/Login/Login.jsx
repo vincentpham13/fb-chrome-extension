@@ -109,7 +109,7 @@ const Login = (props) => {
       >
         Bắt đầu
       </button>) : null}
-      <Spinner loading={isChecking} />
+      <Spinner loading={isChecking} withLabel />
     </div>
   )
 }

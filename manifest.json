@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "VP Message",
+  "name": "BomBot.vn",
   "version": "1.0.0",
-  "description": "Send multiple messages to your facebook users",
+  "description": "Ứng dụng gửi tin nhắn hàng loạt",
   "browser_action": {
     "default_popup": "index.html"
   },

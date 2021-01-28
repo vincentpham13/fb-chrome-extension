@@ -7,6 +7,7 @@ import styles from './Spinner.module.scss';
 
 const Spinner = ({
   loading,
+  withLabel,
   ...rest
 }) => {
 
@@ -16,7 +17,7 @@ const Spinner = ({
       {...rest}
     >
       <span className={styles["ic-loading"]}>
-        <div>Đang kiểm tra</div>
+        {withLabel ? (<div>Đang kiểm tra</div>) : null}
         <ReactSpinner color="success" />
       </span>
     </div>

@@ -4,7 +4,7 @@
   .menu-group {
     .menu-item {
       width: 100%;
-      padding: 0.875rem 0;
+      padding: 0.475rem 0;
       border-bottom: 1px solid #d8d5d5;
 
       &.item-vertical {
@@ -49,6 +49,11 @@
           background-repeat: no-repeat, repeat;
           background-position: right 0.7em top 50%, 0 0;
           background-size: 0.65em auto, 100%;
+
+          &:focus {
+            outline: 1px solid #28a745;
+            outline-style: auto;
+          }
         }
       }
       .select-fanpage {
@@ -90,7 +95,7 @@
             }
             &:focus {
               border-color: #aaa;
-              box-shadow: 0 0 1px 1px rgba(4, 174, 52, 1);
+              box-shadow: 0 0 1px 1px #01A351;
               color: #222;
               outline: none;
             }
@@ -159,12 +164,12 @@
         }
         tbody {
           display: block;
-          height: 14.125rem;
+          height: 13.125rem;
           overflow: auto;
         }
         td {
           border: 1px solid #ddd;
-          padding: 5px 6px;
+          padding: 7px;
           font-size: 15px;
           text-align: justify;
         }
@@ -174,8 +179,14 @@
           padding-top: 12px;
           padding-bottom: 12px;
           text-align: left;
-          background-color: #04ae34;
+          background-color: #01A351;
           color: white;
+          // &:first-child {
+          //   background-color: #f2f2f2;
+          // }
+          // &:nth-child(2) {
+          //   background-color: #f2f2f2;
+          // }
         }
         tr {
           &:nth-child(even) {

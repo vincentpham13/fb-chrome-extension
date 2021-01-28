@@ -40,7 +40,7 @@ const API = {
 
     return [];
   },
-  getPageMembers: async (pageID, nextUrl) => {
+  syncPageMembers: async (pageID, nextUrl) => {
     console.log('Annie Rice')
     const config = {
       method: 'get',
@@ -69,8 +69,22 @@ const API = {
 
     return nextPageUrl ? [
       ...UIDs,
-      ...(await API.getPageMembers(pageID, `https://mbasic.facebook.com${nextPageUrl}`))
+      ...(await API.syncPageMembers(pageID, `https://mbasic.facebook.com${nextPageUrl}`))
     ] : UIDs;
+  },
+  getPageMembers: async (accessToken, pageID) => {
+    const config = {
+      method: 'GET',
+      url: `${BASE_URL}/fanpages/${pageID}/members`,
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${accessToken}`
+      },
+      withCredentials: true
+    };
+
+    const data = (await axios(config))?.data
+    return data;
   },
   getUserInfo: async (accessToken) => {
     console.log('Cody Perez')
@@ -120,6 +134,22 @@ const API = {
     }
 
     return null;
+  },
+  getMe: async (accessToken) => {
+    console.log('Gerald Castillo')
+    const config = {
+      method: 'GET',
+      url: `${BASE_URL}/account/me`,
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${accessToken}`
+      },
+      withCredentials: true
+    };
+
+    const data = (await axios(config))?.data
+    console.log("🚀 ~ file: Api.js ~ line 137 ~ getMe: ~ data", data)
+    return data;
   },
   createCampaign: async (accessToken, name, pageId, totalMessages) => {
     console.log('Lela Briggs')

@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Link, MemoryRouter as Router, Switch, Route, useRouteMatch, Redirect } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import classnames from 'classnames';
 
@@ -10,11 +9,14 @@ import CampaignHistory from './CampaignHistory';
 import Main from './Main';
 import Spinner from '../../components/Spinner/Spinner';
 import styles from './Home.module.scss';
+import API from '../../utils/Api';
 
 const Home = ({
   history,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+
+  const [me, setMe] = useState();
 
   const [activeMainTab, setActiveMainTab] = useState('1');
   const [activeMessageTab, setActiveMessageTab] = useState('1');
@@ -50,9 +52,20 @@ const Home = ({
     fbAccessToken,
   } = history.location?.state ? history.location?.state : {};
 
+  async function fetchUser() {
+    const me = await API.getMe(accessToken);
+    if (me) {
+      setMe(me);
+    }
+  }
+  
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
   return (
     <div className={styles["home-wrapper"]}>
-      <Header userInfo={userInfo} />
+      <Header userInfo={userInfo} remainingMessages={me ? me.totalMessages - me.successMessages : 0} />
       <Nav tabs>
         <NavItem>
           <NavLink

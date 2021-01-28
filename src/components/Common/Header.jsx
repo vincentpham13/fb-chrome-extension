@@ -5,9 +5,9 @@ import styles from './Common.module.scss';
 import API from '../../utils/Api';
 import exitIcon from '../../images/exit.png';
 
-
 const Header = ({
   userInfo,
+  remainingMessages,
   history
 }) => {
 
@@ -35,7 +35,7 @@ const Header = ({
           Số lượng tin nhắn còn lại
         </div>
         <div className={styles["balance-ammount"]}>
-          999
+          {remainingMessages}
         </div>
 
       </div>

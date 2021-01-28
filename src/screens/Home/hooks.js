@@ -15,13 +15,18 @@ function useSuccessMessage(accessToken, campaignId) {
         switch (type) {
           case "RECEIVE_COMPLETED_MESSAGE":
             setSuccessMessage(data);
-            await API.updateMessageCount(accessToken, campaignId, 1);
+            Promise.resolve(
+              API.updateMessageCount(accessToken, campaignId, 1)
+            )
+            sendResponse('Submited on foreground, background just ignore this');
             break;
           default:
             break;
         }
-        sendResponse('Submited on foreground, background just ignore this');
+        sendResponse(null);
       });
+
+      return () => chrome.runtime.onMessage.removeListener()
     }
   }, [accessToken, campaignId])
 

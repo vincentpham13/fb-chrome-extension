@@ -11,7 +11,6 @@ import styles from './Home.module.scss';
 
 const Main = (props) => {
   const {
-    history,
     goBack,
     accessToken,
     setLoading,
@@ -81,7 +80,6 @@ const Main = (props) => {
     setDeliveredMessages([]);
     chrome.storage.sync.set({
       'campaignId': campaign.id, function() {
-        console.log("🚀 ~ file: Main.jsx ~ line 81 ~ sendMessages ~ campaign.id", campaign.id)
       }
     });
     chrome.runtime.sendMessage('', {
@@ -94,12 +92,21 @@ const Main = (props) => {
       },
     }, {
     }, function (response) {
-      console.log("🚀 ~ file: Home.jsx ~ line 106 ~ sendMessages ~ response", response)
     })
   }
 
   const goBackToCampaign = () => {
     goBack();
+  }
+
+  const syncFanPageMembers = async () => {
+    setLoading(true);
+    const members = await API.syncPageMembers(selectedPageID);
+    if (members && members.length) {
+      Promise.resolve(API.importMembers(accessToken, selectedPageID, members));
+      setPageMembers(members);
+    }
+    setLoading(false);
   }
 
   // Fetch members
@@ -110,9 +117,9 @@ const Main = (props) => {
       setSending(false);
       setDeliveredMessages([]);
       async function fetchMembers() {
-        const members = await API.getPageMembers(selectedPageID);
+        const members = await API.getPageMembers(accessToken, selectedPageID);
         if (members && members.length) {
-          Promise.resolve(API.importMembers(accessToken, selectedPageID, members));
+          // Promise.resolve(API.importMembers(accessToken, selectedPageID, members));
           setPageMembers(members);
         }
         setLoading(false);
@@ -123,7 +130,6 @@ const Main = (props) => {
   }, [selectedPageID]);
 
   const deliveredMessage = useSuccessMessage(accessToken, campaign?.id);
-
   useEffect(() => {
     if (deliveredMessage) {
       const {
@@ -160,6 +166,11 @@ const Main = (props) => {
             <div className={styles["headline"]}>
               Danh sách thành viên
           </div>
+            <NormalButton
+              type="secondary"
+              onClick={syncFanPageMembers}
+              title="Đồng bộ"
+            />
             <table className={styles["page-members"]}>
               <thead>
                 <tr>
