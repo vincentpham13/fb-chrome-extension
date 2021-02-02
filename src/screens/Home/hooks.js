@@ -14,7 +14,7 @@ function useSuccessMessage(accessToken, campaignId) {
 
         switch (type) {
           case "RECEIVE_COMPLETED_MESSAGE":
-            setSuccessMessage(data);
+            setSuccessMessage(new Date().getTime());
             await API.updateMessageCount(accessToken, campaignId, 1);
             break;
           default:

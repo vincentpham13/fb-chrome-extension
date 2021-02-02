@@ -4,7 +4,7 @@
   .menu-group {
     .menu-item {
       width: 100%;
-      padding: 0.875rem 0;
+      padding: 0.875rem 0 0 0;
       border-bottom: 1px solid #d8d5d5;
 
       &.item-vertical {
@@ -159,7 +159,7 @@
         }
         tbody {
           display: block;
-          height: 14.125rem;
+          height: 13.125rem;
           overflow: auto;
         }
         td {
@@ -174,7 +174,7 @@
           padding-top: 12px;
           padding-bottom: 12px;
           text-align: left;
-          background-color: #04ae34;
+          background-color: #01A351;
           color: white;
         }
         tr {

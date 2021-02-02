@@ -20,10 +20,23 @@ const CampaignHistory = ({
     }
   }
 
+  const statusCampaign = (status) => {
+    switch (status) {
+      case 'pending':
+        return 'Đang chờ';
+      case 'running':
+        return 'Đang chạy';
+      case 'completed':
+        return 'Hoàn tất';
+      default:
+        return 'Không xác định';
+    }
+  }
+
   useEffect(() => {
     async function fetchSyncedFanpages() {
       setLoading(true);
-      const pages= await API.getSyncedFanpages(accessToken);
+      const pages = await API.getSyncedFanpages(accessToken);
       setLoading(false);
       setFanpages(pages?.length ? pages : []);
     }
@@ -73,24 +86,24 @@ const CampaignHistory = ({
             <table className={styles["page-members"]}>
               <thead>
                 <tr>
-                  <th>ID</th>
+                  <th width={"60px"}>ID</th>
                   <th>Tên chiến dịch</th>
-                  <th>Ngày tạo</th>
-                  <th>Số lượng tin nhắn</th>
-                  <th>Thành công</th>
-                  <th>Trạng thái</th>
+                  <th width={"100px"}>Ngày tạo</th>
+                  <th width={"80px"}>Số lượng tin nhắn</th>
+                  <th width={"80px"}>Thành công</th>
+                  <th width={"100px"}>Trạng thái</th>
                 </tr>
               </thead>
               <tbody>
                 {
                   campaigns.map(campaign => (
                     <tr key={campaign.id}>
-                      <td>{campaign.id}</td>
+                      <td width={"60px"}>{campaign.id}</td>
                       <td>{campaign.name}</td>
-                      <td>{new Date(campaign.createdAt).toLocaleDateString('en-GB')}</td>
-                      <td>{campaign.totalMessages}</td>
-                      <td>{campaign.successMessages}</td>
-                      <td>{campaign.status}</td>
+                      <td width={"100px"}>{new Date(campaign.createdAt).toLocaleDateString('en-GB')}</td>
+                      <td width={"80px"}>{campaign.totalMessages}</td>
+                      <td width={"80px"}>{campaign.successMessages}</td>
+                      <td width={"100px"}>{statusCampaign(campaign.status)}</td>
                     </tr>
                   ))
                 }

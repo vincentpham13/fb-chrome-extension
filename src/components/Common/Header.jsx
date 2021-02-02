@@ -35,7 +35,7 @@ const Header = ({
           Số lượng tin nhắn còn lại
         </div>
         <div className={styles["balance-ammount"]}>
-          999
+          {userInfo?.remainingMessages}
         </div>
 
       </div>

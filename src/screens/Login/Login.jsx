@@ -10,9 +10,9 @@ const Login = (props) => {
   const { history } = props;
   const options = {
     type: "basic",
-    title: "Facebook authentication",
-    message: "Grant your FB access to extension!",
-    iconUrl: "logo192.png"
+    title: "Đăng nhập Facebook",
+    message: "Bombot cần truy cập vào tài khoản của bạn",
+    iconUrl: "logo.png"
   }
 
   const successURL = 'https://www.facebook.com/connect/login_success.html';
@@ -75,25 +75,42 @@ const Login = (props) => {
     if (fbAccessToken) {
       setIsChecking(true);
       async function checkValidFbToekenAndAccessToken() {
-        const fbuser = await API.getUserInfo(fbAccessToken);
-        if (fbuser) {
-          const user = await API.loginWithFbToken(fbuser.id, fbAccessToken);
-          if (user) {
-            history.push({
-              pathname: '/home',
-              state: {
-                userInfo: fbuser,
-                fbAccessToken,
-                accessToken: user.accessToken,
-              },
-            });
-            chrome.storage.sync.set({
-              'accessToken': user.accessToken, function() {
-              }
-            });
+        try {
+          const fbuser = await API.getUserInfo(fbAccessToken);
+          if (fbuser) {
+            const user = await API.loginWithFbToken(fbuser.id, fbAccessToken);
+            if (user) {
+              const me = await API.getMe(user.accessToken);
+              console.log("🚀 ~ file: Login.jsx ~ line 83 ~ checkValidFbToekenAndAccessToken ~ me", me)
+              history.push({
+                pathname: '/home',
+                state: {
+                  userInfo: {
+                    ...fbuser,
+                    remainingMessages: me?.totalMessages - me?.successMessages,
+                  },
+                  fbAccessToken,
+                  accessToken: user.accessToken,
+                },
+              });
+              chrome.storage.sync.set({
+                'accessToken': user.accessToken, function() {
+                }
+              });
+            }
           }
+        } catch (error) {
+          console.log("🚀 ~ file: Login.jsx ~ line 103 ~ checkValidFbToekenAndAccessToken ~ error", error)
+          chrome.notifications.create(`fb-connect-start-${new Date().getTime()}`, {
+            ...options,
+            title: 'Có lỗi xảy xa',
+            message: 'Token đã hết hạn'
+          }, (notificationId) => {
+
+          });
+        } finally {
+          setIsChecking(false);
         }
-        return setIsChecking(false);
       }
       checkValidFbToekenAndAccessToken();
     } else {

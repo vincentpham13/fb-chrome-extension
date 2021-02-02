@@ -72,16 +72,16 @@ code {
 }
 /* boostrap */
 .nav-link {
-  color: #04ae34;
+  color: #01A351;
   font-weight: 600;
 }
 
 .nav-link:hover {
-  color: #04ae34;
+  color: #01A351;
 }
 
 #root {
-  width: 665px;
+  width: 700px;
   height: 600px;
   background-color: #FFF;
   padding: 0.75rem 0.75rem 0 0.75rem;

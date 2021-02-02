@@ -137,7 +137,7 @@ const Campaign = (props) => {
                 name=""
                 id=""
                 cols="30"
-                rows="8"
+                rows="10"
                 placeholder="Nội dung tin nhắn"
               ></textarea>
             </div>

@@ -71,7 +71,15 @@ const Main = (props) => {
       alert('Thiếu dữ liệu')
     }
 
-    const campaign = await API.createCampaign(accessToken, campaignName, selectedPageID, pageMembers.length)
+    const memberUIDs = pageMembers.map(member => member.uid);
+    const campaign = await API.createCampaign(
+      accessToken,
+      campaignName,
+      selectedPageID,
+      memberUIDs,
+      message,
+      );
+
     if (!campaign) {
       return;
     }
@@ -99,7 +107,24 @@ const Main = (props) => {
   }
 
   const goBackToCampaign = () => {
+    setPageMembers([]);
+    setDeliveredMessages([]);
     goBack();
+  }
+
+  const syncPageMembers = async () => {
+    try {
+      setLoading(true);
+      const members = await API.syncPageMembers(selectedPageID);
+      if (members.length) {
+        Promise.resolve(API.importMembers(accessToken, selectedPageID, members));
+        setPageMembers(members);
+      }
+    } catch (error) {
+      console.log("🚀 ~ file: Main.jsx ~ line 128 ~ syncPageMembers ~ error", error)
+    } finally {
+      setLoading(false);
+    }
   }
 
   // Fetch members
@@ -110,9 +135,9 @@ const Main = (props) => {
       setSending(false);
       setDeliveredMessages([]);
       async function fetchMembers() {
-        const members = await API.getPageMembers(selectedPageID);
+        const members = await API.getPageMembers(selectedPageID, accessToken);
+
         if (members && members.length) {
-          Promise.resolve(API.importMembers(accessToken, selectedPageID, members));
           setPageMembers(members);
         }
         setLoading(false);
@@ -125,22 +150,9 @@ const Main = (props) => {
   const deliveredMessage = useSuccessMessage(accessToken, campaign?.id);
 
   useEffect(() => {
+    console.log("🚀 ~ file: Main.jsx ~ line 145 ~ useEffect ~ deliveredMessage", deliveredMessage, deliveredMessages)
     if (deliveredMessage) {
-      const {
-        pageID,
-        memberID,
-      } = deliveredMessage;
-
-      if (pageID == selectedPageID) {
-        if (!deliveredMessages.includes(memberID)) {
-          setDeliveredMessages([
-            ...deliveredMessages,
-            memberID,
-          ]);
-        } else {
-          console.warn('Duplicated completed message under memberID:', memberID);
-        }
-      }
+      setDeliveredMessages(deli => [...(deli || []), deliveredMessage]);
     }
   }, [deliveredMessage]);
 
@@ -160,6 +172,10 @@ const Main = (props) => {
             <div className={styles["headline"]}>
               Danh sách thành viên
           </div>
+            <NormalButton
+              onClick={syncPageMembers}
+              title="Đồng bộ"
+            />
             <table className={styles["page-members"]}>
               <thead>
                 <tr>
