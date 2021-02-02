@@ -44,15 +44,24 @@
     .balance-ammount {
       font-size: 0.875rem;
       width: 50px;
-      color: #01A351;
+      color: #01a351;
       text-transform: capitalize;
     }
   }
 }
 
-.btn-loading, .btn-normal {
-  margin-top: 10px;
+.btn-loading,
+.btn-normal {
+  // margin-top: 10px;
   display: inline-block;
+
+  &.secondary {
+    button {
+      background-color: #fff;
+      border: 1px solid #01a351;
+      color: #01a351;
+    }
+  }
 
   button {
     display: inline-flex;
@@ -62,9 +71,9 @@
     min-width: 110px;
     padding: 0 0.625rem;
     border: none;
-    background-color: #01A351;
-    border-radius: 4px;
+    background-color: #01a351;
     color: #fff;
+    border-radius: 4px;
     font-size: 1rem;
     cursor: pointer;
 
@@ -120,7 +129,7 @@
   text-align: center;
   width: 100%;
   > span {
-    background-color: #01A351;
+    background-color: #01a351;
     display: block;
     height: 100%;
     overflow: hidden;

@@ -181,6 +181,25 @@ const API = {
 
     return null;
   },
+  startCampaign: async (accessToken, campaignId) => {
+    console.log('Lela Briggs')
+    const config = {
+      method: 'post',
+      url: `${BASE_URL}/campaigns/${campaignId}/start`,
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${accessToken}`
+      },
+      withCredentials: true
+    };
+
+    const data = (await axios(config))?.data
+    if (data?.id && data?.name) {
+      return data;
+    }
+
+    return null;
+  },
   updateMessageCount: async (accessToken, campaignId, count = 1) => {
     console.log('Marie Rhodes')
     const config = {

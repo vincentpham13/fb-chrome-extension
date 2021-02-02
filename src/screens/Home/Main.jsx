@@ -8,6 +8,8 @@ import LoadingButton from '../../components/Common/LoadingButton';
 import NormalButton from '../../components/Common/NormalButton';
 import ProgressBar from '../../components/Common/ProgressBar';
 import styles from './Home.module.scss';
+import Noti from '../../utils/Notification';
+import refreshIcon from '../../images/refresh-arrow.png';
 
 const Main = (props) => {
   const {
@@ -68,7 +70,10 @@ const Main = (props) => {
       || !message
 
     ) {
-      alert('Thiếu dữ liệu')
+      Noti.show(
+        "Chiến dịch",
+        "Thiếu dữ liệu, vui lòng kiểm tra lại",
+      );
     }
 
     const memberUIDs = pageMembers.map(member => member.uid);
@@ -78,9 +83,18 @@ const Main = (props) => {
       selectedPageID,
       memberUIDs,
       message,
-      );
+    );
 
     if (!campaign) {
+      Noti.show(
+        "Chiến dịch",
+        "Tạo chiến dịch không thành công",
+      );
+      return;
+    }
+
+    const startedCampaign = await API.startCampaign(accessToken, campaign.id);
+    if (!startedCampaign) {
       return;
     }
 
@@ -104,6 +118,47 @@ const Main = (props) => {
     }, function (response) {
       console.log("🚀 ~ file: Home.jsx ~ line 106 ~ sendMessages ~ response", response)
     })
+  }
+
+  const saveAsDraft = async () => {
+    // validate data
+    if (
+      !selectedPageID
+      || intervalMessageTime > 5
+      || intervalMessageTime < 1
+      || !pageMembers.length
+      || !campaignName
+      || !message
+
+    ) {
+      Noti.show(
+        "Chiến dịch",
+        "Thiếu dữ liệu, vui lòng kiểm tra lại",
+      );
+    }
+
+    const memberUIDs = pageMembers.map(member => member.uid);
+    const campaign = await API.createCampaign(
+      accessToken,
+      campaignName,
+      selectedPageID,
+      memberUIDs,
+      message,
+    );
+
+    if (!campaign) {
+      Noti.show(
+        "Chiến dịch",
+        "Lưu chiến dịch không thành công",
+      );
+      return;
+    } else {
+      Noti.show(
+        "Chiến dịch",
+        "Đã lưu chiến dịch thành công",
+      );
+    }
+    goBack();
   }
 
   const goBackToCampaign = () => {
@@ -170,12 +225,17 @@ const Main = (props) => {
         <div className={styles["menu-group"]}>
           <section className={styles["menu-item"]}>
             <div className={styles["headline"]}>
-              Danh sách thành viên
-          </div>
-            <NormalButton
+              Danh sách thành viên <div
+                onClick={syncPageMembers}
+                className={styles["btn-reload"]}
+              >
+                <img src={refreshIcon} alt="" />
+              </div>
+            </div>
+            {/* <NormalButton
               onClick={syncPageMembers}
               title="Đồng bộ"
-            />
+            /> */}
             <table className={styles["page-members"]}>
               <thead>
                 <tr>
@@ -227,10 +287,19 @@ const Main = (props) => {
               onClick={goBackToCampaign}
               title="Trở lại"
             />
-            <LoadingButton
-              onClick={sendMessages}
-              loading={sending}
-            />
+            <div className={styles["btn-group"]}>
+              {
+                !sending ? (<NormalButton
+                  type="secondary"
+                  onClick={saveAsDraft}
+                  title="Để sau"
+                />) : null
+              }
+              <LoadingButton
+                onClick={sendMessages}
+                loading={sending}
+              />
+            </div>
           </section>
         </div>
       </div>

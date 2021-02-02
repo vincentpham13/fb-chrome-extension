@@ -7,6 +7,16 @@
       padding: 0.875rem 0 0 0;
       border-bottom: 1px solid #d8d5d5;
 
+      .btn-group {
+        display: flex;
+        div {
+          margin-right: 1rem;
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+      }
+
       &.item-vertical {
         flex-direction: column;
       }
@@ -18,10 +28,23 @@
       }
 
       .headline {
+        display: flex;
+        align-items: center;
         color: #2f4858;
         font-size: 1.125rem;
         font-weight: 600;
         margin-bottom: 0.5rem;
+
+        .btn-reload {
+          display: inline-block;
+          height: 35px;
+          cursor: pointer;
+
+          img {
+            max-width: 100%;
+            max-height: 100%;
+          }
+        }
       }
       .input-text {
         input,
@@ -159,13 +182,18 @@
         }
         tbody {
           display: block;
-          height: 13.125rem;
+          height: 15.775rem;
           overflow: auto;
+
+          &.responsive {
+            min-height: 15.775rem;
+            height: 19rem;
+          }
         }
         td {
           border: 1px solid #ddd;
-          padding: 5px 6px;
-          font-size: 15px;
+          padding: 6px;
+          font-size: 0.875rem;
           text-align: justify;
         }
         th {
@@ -174,8 +202,9 @@
           padding-top: 12px;
           padding-bottom: 12px;
           text-align: left;
-          background-color: #01A351;
+          background-color: #01a351;
           color: white;
+          font-size: 0.875rem;
         }
         tr {
           &:nth-child(even) {

@@ -100,4 +100,3 @@ chrome.runtime.onInstalled.addListener(function () {
   console.log('add onComplee, event');
   chrome.webRequest.onCompleted.addListener(requestCompleted, { urls: ['https://m.facebook.com/*'] })
 });
-

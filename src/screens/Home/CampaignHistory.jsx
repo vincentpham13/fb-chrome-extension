@@ -3,6 +3,7 @@ import cx from 'classnames';
 
 import API from '../../utils/Api';
 import styles from './Home.module.scss';
+import refreshIcon from '../../images/refresh-arrow.png';
 
 const CampaignHistory = ({
   accessToken,
@@ -33,6 +34,18 @@ const CampaignHistory = ({
     }
   }
 
+  const reloadPageCampaigns = async () => {
+    try {
+      setLoading(true);
+      const syncedCampaigns = await API.getPageCampaigns(accessToken, selectedPageID);
+      setCampaigns(syncedCampaigns?.length ? syncedCampaigns : []);
+    } catch (error) {
+      console.log("🚀 ~ file: CampaignHistory.jsx ~ line 55 ~ fetchPageCampaigns ~ error", error)
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     async function fetchSyncedFanpages() {
       setLoading(true);
@@ -46,10 +59,15 @@ const CampaignHistory = ({
   useEffect(() => {
     if (selectedPageID) {
       async function fetchPageCampaigns() {
-        setLoading(true);
-        const syncedCampaigns = await API.getPageCampaigns(accessToken, selectedPageID);
-        setLoading(false);
-        setCampaigns(syncedCampaigns?.length ? syncedCampaigns : []);
+        try {
+          setLoading(true);
+          const syncedCampaigns = await API.getPageCampaigns(accessToken, selectedPageID);
+          setCampaigns(syncedCampaigns?.length ? syncedCampaigns : []);
+        } catch (error) {
+          console.log("🚀 ~ file: CampaignHistory.jsx ~ line 55 ~ fetchPageCampaigns ~ error", error)
+        } finally {
+          setLoading(false);
+        }
       }
       fetchPageCampaigns();
     }
@@ -82,7 +100,13 @@ const CampaignHistory = ({
           <section className={cx(styles["menu-item"], styles["item-vertical"])}>
             <div className={styles["headline"]}>
               Chiến dịch đã chạy
-          </div>
+              <div
+                onClick={reloadPageCampaigns}
+                className={styles["btn-reload"]}
+              >
+                <img src={refreshIcon} alt="" />
+              </div>
+            </div>
             <table className={styles["page-members"]}>
               <thead>
                 <tr>
@@ -94,13 +118,13 @@ const CampaignHistory = ({
                   <th width={"100px"}>Trạng thái</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className={styles["responsive"]}>
                 {
                   campaigns.map(campaign => (
                     <tr key={campaign.id}>
                       <td width={"60px"}>{campaign.id}</td>
                       <td>{campaign.name}</td>
-                      <td width={"100px"}>{new Date(campaign.createdAt).toLocaleDateString('en-GB')}</td>
+                      <td width={"100px"}>{new Date(campaign.createdAt).toLocaleString('en-GB')}</td>
                       <td width={"80px"}>{campaign.totalMessages}</td>
                       <td width={"80px"}>{campaign.successMessages}</td>
                       <td width={"100px"}>{statusCampaign(campaign.status)}</td>

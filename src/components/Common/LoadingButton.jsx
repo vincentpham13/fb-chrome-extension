@@ -21,7 +21,7 @@ const LoadingButton = ({
             <span className={styles['icon-send']} />
           )}
 
-        {loading ? 'Đang gửi' : 'Gửi'}
+        {loading ? 'Đang gửi' : 'Gửi ngay'}
       </button>
     </div>
   )

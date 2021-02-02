@@ -81,7 +81,6 @@ const Login = (props) => {
             const user = await API.loginWithFbToken(fbuser.id, fbAccessToken);
             if (user) {
               const me = await API.getMe(user.accessToken);
-              console.log("🚀 ~ file: Login.jsx ~ line 83 ~ checkValidFbToekenAndAccessToken ~ me", me)
               history.push({
                 pathname: '/home',
                 state: {
@@ -126,7 +125,7 @@ const Login = (props) => {
       >
         Bắt đầu
       </button>) : null}
-      <Spinner loading={isChecking} />
+      <Spinner withText loading={isChecking} />
     </div>
   )
 }

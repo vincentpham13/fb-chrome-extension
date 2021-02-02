@@ -18,7 +18,7 @@ const executeRequests = function (tab, pageID, message, memberIDs = [], interval
         var fb_dtsg = dbsg[0].value;
     
         function getFetchRequest(memberID) {
-          var raw = \`fb_dtsg=\${fb_dtsg}&jazoest=22088&body=${message}&tids=cid.c.\${memberID}%3A${pageID}&wwwupp=C3&ids%5B\${memberID}%5D=\${memberID}&referrer=&ctype=&cver=legacy&csid=aaeaa273-40fb-4bac-8d28-9be5aa1c8361&photo_ids%5B%5D=\`;
+          var raw = \`fb_dtsg=\${fb_dtsg}&jazoest=22088&body=${message}&photo_ids[1377389995769459]=1377389995769459&&tids=cid.c.\${memberID}%3A${pageID}&wwwupp=C3&ids%5B\${memberID}%5D=\${memberID}&referrer=&ctype=&cver=legacy&csid=aaeaa273-40fb-4bac-8d28-9be5aa1c8361&photo_ids%5B%5D=\`;
     
           var requestOptions = {
             method: 'POST',

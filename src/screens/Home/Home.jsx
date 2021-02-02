@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Link, MemoryRouter as Router, Switch, Route, useRouteMatch, Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 import classnames from 'classnames';
 
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import Header from "../../components/Common/Header";
 import Campaign from './Campaign';
 import CampaignHistory from './CampaignHistory';
