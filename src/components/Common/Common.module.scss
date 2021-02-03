@@ -62,6 +62,11 @@
       color: #01a351;
     }
   }
+  &.small {
+    button {
+      height: 28px;
+    }
+  }
 
   button {
     display: inline-flex;

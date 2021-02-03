@@ -31,12 +31,21 @@ const Home = ({
   const goNextMessageTab = () => {
     setActiveMessageTab('2');
   }
-  const goBackMessageTab = () => {
+  const goBackMessageTab = (data) => {
     setActiveMessageTab('1');
+    if (data) {
+      setActiveMainTab('1');
+      setDataTab1({
+        campaignId: data.id,
+        selectedPageID: data.pageId,
+        campaignName: data.name,
+        message: data.message,
+        memberUIDs: data?.memberUids,
+      })
+    }
   }
 
   const onReceiveDataTab1 = (data) => {
-    console.log("🚀 ~ file: Home.jsx ~ line 41 ~ onReceiveDataTab1 ~ data", data)
     setDataTab1({
       ...dataTab1,
       ...data
@@ -82,6 +91,7 @@ const Home = ({
                         fbAccessToken={fbAccessToken}
                         accessToken={accessToken}
                         setDataTab1={onReceiveDataTab1}
+                        initialData={dataTab1}
                         goNext={goNextMessageTab}
                       />
                     </Col>
@@ -107,6 +117,7 @@ const Home = ({
           <Row>
             <Col md="12">
               <CampaignHistory
+                goBack={goBackMessageTab}
                 accessToken={accessToken}
                 setLoading={setIsLoading}
               />

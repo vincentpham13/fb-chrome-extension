@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
+import cx from 'classnames';
 
 import API from '../../utils/Api';
 import { useSuccessMessage } from './hooks';
@@ -18,9 +19,12 @@ const Main = (props) => {
     accessToken,
     setLoading,
     tab1Data: {
+      campaignId,
       selectedPageID,
       campaignName,
       message,
+      memberUIDs,
+      imageLink,
     }
   } = props;
   const [sending, setSending] = useState(false);
@@ -77,30 +81,39 @@ const Main = (props) => {
     }
 
     const memberUIDs = pageMembers.map(member => member.uid);
-    const campaign = await API.createCampaign(
-      accessToken,
-      campaignName,
-      selectedPageID,
-      memberUIDs,
-      message,
-    );
-
-    if (!campaign) {
-      Noti.show(
-        "Chiến dịch",
-        "Tạo chiến dịch không thành công",
+    let campaign;
+    if (campaignId) {
+      campaign = await API.startCampaign(
+        accessToken,
+        campaignId,
       );
-      return;
-    }
+    } else {
+      campaign = await API.createCampaign(
+        accessToken,
+        campaignName,
+        selectedPageID,
+        memberUIDs,
+        message,
+      );
 
-    const startedCampaign = await API.startCampaign(accessToken, campaign.id);
-    if (!startedCampaign) {
-      return;
+      if (!campaign) {
+        Noti.show(
+          "Chiến dịch",
+          "Tạo chiến dịch không thành công",
+        );
+        return;
+      }
+
+      const startedCampaign = await API.startCampaign(accessToken, campaign.id);
+      if (!startedCampaign) {
+        return;
+      }
     }
 
     setCampaign(campaign);
     setSending(true);
     setDeliveredMessages([]);
+
     chrome.storage.sync.set({
       'campaignId': campaign.id, function() {
         console.log("🚀 ~ file: Main.jsx ~ line 81 ~ sendMessages ~ campaign.id", campaign.id)
@@ -110,14 +123,15 @@ const Main = (props) => {
       type: "SEND_MESSAGE_TO_PAGE_MEMBERS",
       data: {
         pageID: selectedPageID,
-        message: message,
+        message,
+        imageLink,
         memberIDs: pageMembers.map(mem => mem.uid),
         interval: intervalMessageTime,
       },
     }, {
     }, function (response) {
       console.log("🚀 ~ file: Home.jsx ~ line 106 ~ sendMessages ~ response", response)
-    })
+    });
   }
 
   const saveAsDraft = async () => {
@@ -129,7 +143,6 @@ const Main = (props) => {
       || !pageMembers.length
       || !campaignName
       || !message
-
     ) {
       Noti.show(
         "Chiến dịch",
@@ -192,14 +205,19 @@ const Main = (props) => {
         const members = await API.getPageMembers(selectedPageID, accessToken);
 
         if (members && members.length) {
-          setPageMembers(members);
+
+          if (memberUIDs?.length) {
+            setPageMembers(members.filter(member => memberUIDs.includes(member.uid)));
+          } else {
+            setPageMembers(members);
+          }
         }
         setLoading(false);
       }
       fetchMembers();
     }
 
-  }, [selectedPageID]);
+  }, [selectedPageID, memberUIDs]);
 
   const deliveredMessage = useSuccessMessage(accessToken, campaign?.id);
 
@@ -280,20 +298,21 @@ const Main = (props) => {
               percent={percent}
             />
           </section>
-          <section className={styles["menu-item"]}>
+          <section className={cx(styles["menu-item"], styles["flex-direction-row"])}>
             <NormalButton
               onClick={goBackToCampaign}
               title="Trở lại"
             />
             <div className={styles["btn-group"]}>
               {
-                !sending ? (<NormalButton
+                !sending && !campaignId ? (<NormalButton
                   type="secondary"
                   onClick={saveAsDraft}
                   title="Để sau"
                 />) : null
               }
               <LoadingButton
+                title={campaignId ? 'Chạy campaign' : ''}
                 onClick={sendMessages}
                 loading={sending}
               />

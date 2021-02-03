@@ -4,10 +4,12 @@ import cx from 'classnames';
 import API from '../../utils/Api';
 import styles from './Home.module.scss';
 import refreshIcon from '../../images/refresh-arrow.png';
+import NormalButton from '../../components/Common/NormalButton';
 
 const CampaignHistory = ({
   accessToken,
   setLoading,
+  goBack,
 }) => {
 
   const [campaigns, setCampaigns] = useState([]);
@@ -44,6 +46,11 @@ const CampaignHistory = ({
     } finally {
       setLoading(false);
     }
+  }
+
+  const prepareToRunCampaign = (campaignId) => {
+    const campaign = campaigns.find(c => c.id == campaignId);
+    goBack(campaign);
   }
 
   useEffect(() => {
@@ -115,7 +122,7 @@ const CampaignHistory = ({
                   <th width={"100px"}>Ngày tạo</th>
                   <th width={"80px"}>Số lượng tin nhắn</th>
                   <th width={"80px"}>Thành công</th>
-                  <th width={"100px"}>Trạng thái</th>
+                  <th width={"120px"}>Trạng thái</th>
                 </tr>
               </thead>
               <tbody className={styles["responsive"]}>
@@ -127,7 +134,17 @@ const CampaignHistory = ({
                       <td width={"100px"}>{new Date(campaign.createdAt).toLocaleString('en-GB')}</td>
                       <td width={"80px"}>{campaign.totalMessages}</td>
                       <td width={"80px"}>{campaign.successMessages}</td>
-                      <td width={"100px"}>{statusCampaign(campaign.status)}</td>
+                      <td width={"120px"}>
+                        {
+                          campaign.status === 'pending' ? (
+                            <NormalButton
+                              title="Chạy ngay"
+                              size="small"
+                              onClick={() => prepareToRunCampaign(campaign.id)}
+                            />
+                          ) : statusCampaign(campaign.status)
+                        }
+                      </td>
                     </tr>
                   ))
                 }

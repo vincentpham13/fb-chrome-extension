@@ -21,10 +21,51 @@
         flex-direction: column;
       }
 
+      &:first-child {
+        border-bottom: none;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
       &:last-child {
         border-bottom: none;
-        display: flex;
         justify-content: space-between;
+      }
+
+      &.flex-direction-column {
+        display: flex;
+        flex-direction: column !important;
+      }
+      
+      &.flex-direction-row {
+        display: flex;
+        flex-direction: row !important;
+        justify-content: space-between;
+        
+        .col {
+          display: flex;
+          flex-direction: column;
+          margin: 0 0.5em;
+
+          &:last-child {
+            margin-right: 0;
+          }
+          &:first-child {
+            margin-left: 0;
+          }
+          &.col-70 {
+            width: 70%;
+          }
+          &.col-40 {
+            width: 40%;
+          }
+          &.col-30 {
+            width: 30%;
+          }
+          &.col-flex-1 {
+            width: 70%;
+          }
+        }
       }
 
       .headline {
@@ -45,6 +86,9 @@
             max-height: 100%;
           }
         }
+      }
+      .btn-upload {
+        margin-top: 10px;
       }
       .input-text {
         input,
@@ -72,6 +116,10 @@
           background-repeat: no-repeat, repeat;
           background-position: right 0.7em top 50%, 0 0;
           background-size: 0.65em auto, 100%;
+
+          &:focus {
+            outline-color: rgba(4, 174, 52, 1);
+          }
         }
       }
       .select-fanpage {

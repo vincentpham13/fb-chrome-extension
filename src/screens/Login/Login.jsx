@@ -17,7 +17,7 @@ const Login = (props) => {
 
   const successURL = 'https://www.facebook.com/connect/login_success.html';
   const path = 'https://www.facebook.com/v9.0/dialog/oauth?';
-  const appID = '265010030625004';
+  const appID = '4087907114572119';
   const queryParams = [
     'client_id=' + appID,
     // 'auth_type=rerequest',

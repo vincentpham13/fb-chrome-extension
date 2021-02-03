@@ -21,22 +21,26 @@ function createFileUpload(base64Image) {
   }
 }
 
-const executeRequests = function (tab, pageID, message, memberIDs = [], intervalTime) {
-  chrome.storage.sync.get(['accessToken'], function (data) {
+const executeRequests = function (tab, pageID, message, memberIDs = [], intervalTime, imageLink) {
+  chrome.storage.sync.get(['accessToken'], async function (data) {
     if (data?.accessToken) {
       console.log('co access token');
-      fetch("https://scontent.xx.fbcdn.net/v/t1.15752-9/143414065_838509976712230_4280845249285743471_n.gif?_nc_cat=1&fallback=1&ccb=2&_nc_sid=58c789&_nc_ohc=H2NSTOZF8eAAX-TorzV&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=47c1d6fd519651cde42d552707571322&oe=603EFF9A")
-        .then(function (response) {
-          return response.blob()
-        })
-        .then(function (blob) {
-          const reader = new FileReader();
-          reader.readAsDataURL(blob);
-          reader.onloadend = function () {
-            var base64 = reader.result;
+      let blob = new Blob();
+      try {
+        if (imageLink) {
+          blob = await ((await fetch(imageLink)).blob());
+        }
+      } catch (error) {
+        console.log("🚀 Error while fetching image from url", error)
+      } finally {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = function () {
+          var base64 = reader.result.length <= 5 ? '' : reader.result;
+          console.log("🚀 ~ file: backgroundApi.js ~ line 40 ~ base64", base64)
 
-            chrome.tabs.executeScript(tab.id, {
-              code: `
+          chrome.tabs.executeScript(tab.id, {
+            code: `
               (async function execScript () {
               // util to convert base64 image to blob
               function createFileUpload(base64Image) {
@@ -63,7 +67,7 @@ const executeRequests = function (tab, pageID, message, memberIDs = [], interval
 
               // Upload image
               var base64 = '${base64}';
-              var file = createFileUpload(base64);
+              var file = base64 ? createFileUpload(base64) : new Blob();
               const formData = new FormData();
               formData.append('photo', file, 'photo.jpg');
 
@@ -74,11 +78,12 @@ const executeRequests = function (tab, pageID, message, memberIDs = [], interval
                 }
               };
 
-              let res = await (await fetch(\`https://m.facebook.com/_mupload_/photo/x/saveunpublished/?allow_spherical_photo=true&thumbnail_width=80&thumbnail_height=80&waterfall_id=cdc4d99f912a9fdbdacdce5719a5730f&waterfall_app_name=web_m_touch&waterfall_source=message&target_id=${pageID}&av=${pageID}&fb_dtsg=\${fb_dtsg}&jazoest=21873&m_sess=&__dyn=1KQEGiFoO13DzUjxC2GfGh0BBBgS5UqxKcwRxG9xu3Za1FwKwSwMxW4E2qxK4ohws82ywUx60GEeE2RwVwUwk9EdEnw9u0XoswvosyU6S1QzU1rEWUS0KU4a1PwBgao88C0NE2oCwSwaOfxW0D86i0N85G0zE5W0KE&__csr=&__req=8&__a=AYmdPOLBZMAnCuthlurQpd6vWtoOrsemk9BG7dCDLe1Ph1mR2eEi09GDGe-eC5ZkmGm0x-sfAbxn3ToCUGw9iBg2-LU9vtvlyXueXUgC8XmVUw&__user=100003256970769\`,
-      options)).text();
+              let res = base64 ? await (await fetch(\`https://m.facebook.com/_mupload_/photo/x/saveunpublished/?allow_spherical_photo=true&thumbnail_width=80&thumbnail_height=80&waterfall_id=cdc4d99f912a9fdbdacdce5719a5730f&waterfall_app_name=web_m_touch&waterfall_source=message&target_id=${pageID}&av=${pageID}&fb_dtsg=\${fb_dtsg}&jazoest=21873&m_sess=&__dyn=1KQEGiFoO13DzUjxC2GfGh0BBBgS5UqxKcwRxG9xu3Za1FwKwSwMxW4E2qxK4ohws82ywUx60GEeE2RwVwUwk9EdEnw9u0XoswvosyU6S1QzU1rEWUS0KU4a1PwBgao88C0NE2oCwSwaOfxW0D86i0N85G0zE5W0KE&__csr=&__req=8&__a=AYmdPOLBZMAnCuthlurQpd6vWtoOrsemk9BG7dCDLe1Ph1mR2eEi09GDGe-eC5ZkmGm0x-sfAbxn3ToCUGw9iBg2-LU9vtvlyXueXUgC8XmVUw\`,
+      options)).text() : '';
 
-              console.log(res);
-              let photoId = res.match(/\\"payload\\":{\\"fbid\\":\\"([\\d]*)\\"/)[1];
+              console.log('res', res);
+              const matchedPhotoID= res.match(/\\"payload\\":{\\"fbid\\":\\"([\\d]*)\\"/);
+              let photoId = matchedPhotoID?.length == 2 ? matchedPhotoID[1] : '';
               console.log(photoId);
 
               // Fetch API
@@ -119,9 +124,10 @@ const executeRequests = function (tab, pageID, message, memberIDs = [], interval
               }, ${intervalTime * 1000});
             })();
               `
-            });
-          }
-        });
+          });
+        }
+      }
+
     } else {
       console.warn('Missing accesstoken to update remaining message')
     }
@@ -146,7 +152,7 @@ chrome.runtime.onMessage.addListener(async function (message, sender, sendRespon
         chrome.tabs.query({ url: 'https://m.facebook.com/*' }, function (tabs) {
           if (tabs.length) {
             const tab = tabs[0];
-            executeRequests(tab, data.pageID, data.message, data.memberIDs, data.interval);
+            executeRequests(tab, data.pageID, data.message, data.memberIDs, data.interval, data.imageLink);
           } else {
             chrome.tabs.create({
               'url': 'https://m.facebook.com',
@@ -154,7 +160,7 @@ chrome.runtime.onMessage.addListener(async function (message, sender, sendRespon
               // 'type': 'panel',
               // 'state': 'fullscreen'
             }, function (tab) {
-              executeRequests(tab, data.pageID, data.message, data.memberIDs, data.interval);
+              executeRequests(tab, data.pageID, data.message, data.memberIDs, data.interval, data.imageLink);
             });
           }
         })

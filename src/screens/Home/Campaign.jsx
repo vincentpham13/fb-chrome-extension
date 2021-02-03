@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { withRouter, useRouteMatch } from 'react-router-dom';
+import cx from 'classnames';
 
 import API from '../../utils/Api';
 
@@ -14,12 +15,14 @@ const Campaign = (props) => {
     setDataTab1,
     fbAccessToken,
     goNext,
+    initialData,
   } = props;
 
   const [fanpages, setFanpages] = useState([]);
   const [selectedPageID, setSelectedPageID] = useState(0);
   const [campaignName, setCampaignName] = useState('');
   const [message, setMessage] = useState('');
+  const [imageLink, setImageLink] = useState('');
 
   const onSelectedPageChange = (e) => {
     const { value } = e.target;
@@ -51,6 +54,16 @@ const Campaign = (props) => {
     }
   }
 
+  const onImageLinkChange = (e) => {
+    const { value } = e.target;
+    if (value) {
+      setImageLink(value);
+      setDataTab1({
+        imageLink: value
+      });
+    }
+  }
+
   const reloadAllFanPages = async (e) => {
     const { data: pages } = await API.getFanpages(fbAccessToken);
     setFanpages(pages);
@@ -73,6 +86,15 @@ const Campaign = (props) => {
       }
     })
   }
+
+  useEffect(() => {
+    if (initialData) {
+      setCampaignName(initialData?.campaignName);
+      setMessage(initialData?.message);
+      setSelectedPageID(initialData?.selectedPageID);
+
+    }
+  }, [initialData]);
 
   // Fetch fanpages
   useEffect(() => {
@@ -109,6 +131,7 @@ const Campaign = (props) => {
                 <select
                   onChange={onSelectedPageChange}
                   className={styles["select-box"]}
+                  value={selectedPageID}
                 >
                   <option key={0} value={0}>Chọn Fanpage để gửi tin nhắn</option>
                   {
@@ -126,20 +149,43 @@ const Campaign = (props) => {
               </div>
             </div>
           </section>
-          <section className={styles["menu-item"]}>
-            <div className={styles["headline"]}>
-              Tin nhắn
+          <section className={cx(styles["menu-item"], styles["flex-direction-row"])}>
+            <div className={cx(styles["col"], styles["col-flex-1"])}>
+              <div className={styles["headline"]}>
+                Tin nhắn
             </div>
-            <div className={styles['input-text']}>
-              <textarea
-                onChange={onMessageChange}
-                value={message}
-                name=""
-                id=""
-                cols="30"
-                rows="10"
-                placeholder="Nội dung tin nhắn"
-              ></textarea>
+              <div className={styles['input-text']}>
+                <textarea
+                  onChange={onMessageChange}
+                  value={message}
+                  name=""
+                  id=""
+                  cols="30"
+                  rows="10"
+                  placeholder="Nội dung tin nhắn"
+                ></textarea>
+              </div>
+            </div>
+            <div className={cx(styles["col"], styles["col-40"])}>
+              <div className={styles["headline"]}>
+                Hình ảnh
+                    </div>
+              <div className={styles['input-text']}>
+                <input
+                  onChange={onImageLinkChange}
+                  value={imageLink}
+                  name=""
+                  id=""
+                  placeholder="Link hình ảnh"
+                >
+                </input>
+              </div>
+              <div className={styles["btn-upload"]}>
+                <NormalButton
+                  title="Tải từ máy tính"
+                  type="primary"
+                />
+              </div>
             </div>
           </section>
           <section className={styles["menu-item"]}>
