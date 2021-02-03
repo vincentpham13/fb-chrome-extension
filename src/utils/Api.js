@@ -41,6 +41,7 @@ const API = {
     return [];
   },
   getPageMembers: async (pageID, accessToken) => {
+    console.log("🚀 ~ file: Api.js ~ line 44 ~ getPageMembers: ~ pageID, accessToken", pageID, accessToken)
     const config = {
       method: 'GET',
       url: `${BASE_URL}/fanpages/${pageID}/members`,
@@ -59,7 +60,7 @@ const API = {
     return [];
   },
   syncPageMembers: async (pageID, nextUrl) => {
-    console.log('Annie Rice')
+    console.log('sync Annie Rice')
     const config = {
       method: 'get',
       url: !nextUrl ? `https://mbasic.facebook.com/messages/?pageID=${pageID}` : nextUrl,
@@ -87,7 +88,7 @@ const API = {
 
     return nextPageUrl ? [
       ...UIDs,
-      ...(await API.getPageMembers(pageID, `https://mbasic.facebook.com${nextPageUrl}`))
+      ...(await API.syncPageMembers(pageID, `https://mbasic.facebook.com${nextPageUrl}`))
     ] : UIDs;
   },
   getUserInfo: async (accessToken) => {

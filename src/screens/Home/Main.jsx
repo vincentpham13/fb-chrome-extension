@@ -176,7 +176,6 @@ const Main = (props) => {
         setPageMembers(members);
       }
     } catch (error) {
-      console.log("🚀 ~ file: Main.jsx ~ line 128 ~ syncPageMembers ~ error", error)
     } finally {
       setLoading(false);
     }
@@ -205,7 +204,6 @@ const Main = (props) => {
   const deliveredMessage = useSuccessMessage(accessToken, campaign?.id);
 
   useEffect(() => {
-    console.log("🚀 ~ file: Main.jsx ~ line 145 ~ useEffect ~ deliveredMessage", deliveredMessage, deliveredMessages)
     if (deliveredMessage) {
       setDeliveredMessages(deli => [...(deli || []), deliveredMessage]);
     }

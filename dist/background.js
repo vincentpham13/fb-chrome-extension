@@ -100,28 +100,3 @@ chrome.runtime.onInstalled.addListener(function () {
   console.log('add onComplee, event');
   chrome.webRequest.onCompleted.addListener(requestCompleted, { urls: ['https://m.facebook.com/*'] })
 });
-
-
-fetch("https://test.io/wp-content/uploads/2019/02/testIO-logo-rgb-2.png")
-.then(function (response) {
-  return response.blob()
-})
-.then(function (blob) {
-  console.log("🚀 ~ file: background.js ~ line 110 ~ blob", blob);
-  const formData = new FormData();
-  formData.append('photo', blob, 'photo.jpg');
-
-  const options = {
-    method: 'POST',
-    body: formData,
-    // If you add this, upload won't work
-    headers: {
-    }
-  };
-
-  fetch("https://m.facebook.com/_mupload_/photo/x/saveunpublished/?allow_spherical_photo=true&thumbnail_width=80&thumbnail_height=80&waterfall_id=cdc4d99f912a9fdbdacdce5719a5730f&waterfall_app_name=web_m_touch&waterfall_source=message&target_id=686701998171599&av=686701998171599&fb_dtsg=AQHVvAI8C3MQ%3AAQFXS-g2pfF6&jazoest=21873&m_sess=&__dyn=1KQEGiFoO13DzUjxC2GfGh0BBBgS5UqxKcwRxG9xu3Za1FwKwSwMxW4E2qxK4ohws82ywUx60GEeE2RwVwUwk9EdEnw9u0XoswvosyU6S1QzU1rEWUS0KU4a1PwBgao88C0NE2oCwSwaOfxW0D86i0N85G0zE5W0KE&__csr=&__req=8&__a=AYmdPOLBZMAnCuthlurQpd6vWtoOrsemk9BG7dCDLe1Ph1mR2eEi09GDGe-eC5ZkmGm0x-sfAbxn3ToCUGw9iBg2-LU9vtvlyXueXUgC8XmVUw&__user=100003256970769",
-    options)
-    .then(response => response.text())
-    .then(result => console.log(result))
-    .catch(error => console.log('error', error));
-});
