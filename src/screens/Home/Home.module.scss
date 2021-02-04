@@ -276,6 +276,11 @@
             min-height: 15.775rem;
             height: 19rem;
           }
+          .empty {
+            width: 6rem;
+            margin-top: 3rem;
+            margin-left: calc(50% - 3rem);
+          }
         }
         td {
           border: 1px solid #ddd;

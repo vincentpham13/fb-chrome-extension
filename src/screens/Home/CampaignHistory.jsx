@@ -4,6 +4,7 @@ import cx from 'classnames';
 import API from '../../utils/Api';
 import styles from './Home.module.scss';
 import refreshIcon from '../../images/refresh-arrow.png';
+import emptyBox from '../../images/empty-box.png';
 import NormalButton from '../../components/Common/NormalButton';
 
 const CampaignHistory = ({
@@ -94,7 +95,7 @@ const CampaignHistory = ({
                   onChange={onSelectedPageChange}
                   className={styles["select-box"]}
                 >
-                  <option key={0} value={0}>Chọn Fanpage cần tra</option>
+                  <option key={0} value={0}>Chọn Fanpage cần xem</option>
                   {
                     fanpages.map(fPage => (
                       <option key={fPage.id} value={fPage.id}>{fPage.name}</option>
@@ -127,7 +128,7 @@ const CampaignHistory = ({
               </thead>
               <tbody className={styles["responsive"]}>
                 {
-                  campaigns.map(campaign => (
+                  campaigns.length ? campaigns.map(campaign => (
                     <tr key={campaign.id}>
                       <td width={"60px"}>{campaign.id}</td>
                       <td>{campaign.name}</td>
@@ -140,13 +141,14 @@ const CampaignHistory = ({
                             <NormalButton
                               title="Chạy ngay"
                               size="small"
+                              type="secondary"
                               onClick={() => prepareToRunCampaign(campaign.id)}
                             />
                           ) : statusCampaign(campaign.status)
                         }
                       </td>
                     </tr>
-                  ))
+                  )) : <img className={styles["empty"]} src={emptyBox} alt="" srcset=""/>
                 }
               </tbody>
             </table>
