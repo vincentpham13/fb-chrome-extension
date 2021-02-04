@@ -61,6 +61,14 @@
       border: 1px solid #01a351;
       color: #01a351;
     }
+
+    &:hover {
+      button {
+        background-color: #01a351;
+        border: 1px solid #01a351;
+        color: #FFF;
+      }
+    }
   }
   &.small {
     button {

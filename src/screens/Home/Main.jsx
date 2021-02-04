@@ -28,12 +28,14 @@ const Main = (props) => {
     }
   } = props;
   const [sending, setSending] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
 
   const [pageMembers, setPageMembers] = useState([]);
 
   const [campaign, setCampaign] = useState();
 
   const [deliveredMessages, setDeliveredMessages] = useState([]);
+  const [percent, setPercent] = useState(0);
 
   const [intervalMessageTime, setIntervalMessageTime] = useState(1);
 
@@ -109,7 +111,7 @@ const Main = (props) => {
         return;
       }
     }
-
+    setIsStarted(true);
     setCampaign(campaign);
     setSending(true);
     setDeliveredMessages([]);
@@ -119,6 +121,7 @@ const Main = (props) => {
         console.log("🚀 ~ file: Main.jsx ~ line 81 ~ sendMessages ~ campaign.id", campaign.id)
       }
     });
+
     chrome.runtime.sendMessage('', {
       type: "SEND_MESSAGE_TO_PAGE_MEMBERS",
       data: {
@@ -177,6 +180,10 @@ const Main = (props) => {
   const goBackToCampaign = () => {
     setPageMembers([]);
     setDeliveredMessages([]);
+    setPercent(0);
+    setCampaign();
+    setIsStarted(false);
+    setSending(false);
     goBack();
   }
 
@@ -228,12 +235,13 @@ const Main = (props) => {
   }, [deliveredMessage]);
 
   useEffect(() => {
+    console.log("🚀 ~ file: Main.jsx ~ line 239 ~ useEffect ~ deliveredMessages", deliveredMessages)
+    const pc = Math.floor(deliveredMessages.length / (pageMembers.length || 1) * 100);
+    setPercent(pc);
     if (deliveredMessages.length === pageMembers.length) {
       setSending(false);
     }
   }, [deliveredMessages]);
-
-  const percent = Math.floor(deliveredMessages.length / (pageMembers.length || 1) * 100);
 
   return (
     <>
@@ -305,13 +313,14 @@ const Main = (props) => {
             />
             <div className={styles["btn-group"]}>
               {
-                !sending && !campaignId ? (<NormalButton
+                !sending && !campaignId && !isStarted ? (<NormalButton
                   type="secondary"
                   onClick={saveAsDraft}
                   title="Để sau"
                 />) : null
               }
               <LoadingButton
+                disabled={isStarted || sending}
                 title={campaignId ? 'Chạy campaign' : ''}
                 onClick={sendMessages}
                 loading={sending}

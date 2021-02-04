@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { withRouter, useRouteMatch } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { withRouter } from 'react-router-dom';
 import cx from 'classnames';
 
 import API from '../../utils/Api';
+import File from '../../utils/File';
 
 import NormalButton from '../../components/Common/NormalButton';
-import ProgressBar from '../../components/Common/ProgressBar';
 import styles from './Home.module.scss';
 import refreshIcon from '../../images/refresh-arrow.png';
 
@@ -22,6 +22,7 @@ const Campaign = (props) => {
   const [selectedPageID, setSelectedPageID] = useState(0);
   const [campaignName, setCampaignName] = useState('');
   const [message, setMessage] = useState('');
+  const fileRef = useRef();
   const [imageLink, setImageLink] = useState('');
 
   const onSelectedPageChange = (e) => {
@@ -64,7 +65,27 @@ const Campaign = (props) => {
     }
   }
 
-  const reloadAllFanPages = async (e) => {
+  const openFileUpload = () => {
+    fileRef.current.click();
+  }
+
+  const onFileChange = async (e) => {
+    const [file] = e.target.files;
+    const base64Image = await File.readImage(file);
+    setImageLink(base64Image);
+    setDataTab1({
+      imageLink: base64Image
+    });
+  }
+
+  const resetImage = () => {
+    setImageLink('');
+    setImageLink('');
+    fileRef.current.value = null;
+  }
+
+
+  const reloadAllFanPages = async () => {
     const { data: pages } = await API.getFanpages(fbAccessToken);
     setFanpages(pages);
   }
@@ -181,10 +202,28 @@ const Campaign = (props) => {
                 </input>
               </div>
               <div className={styles["btn-upload"]}>
+                <input
+                  onChange={onFileChange}
+                  ref={fileRef}
+                  type="file"
+                  name=""
+                  accept="image/png, image/jpeg"
+                  id="file"
+                >
+                </input>
                 <NormalButton
+                  onClick={openFileUpload}
                   title="Tải từ máy tính"
-                  type="primary"
+                  type="secondary"
                 />
+              </div>
+              <div className={styles["preview-image"]}>
+                {/* <p>Xem trước</p> */}
+                <span
+                  onClick={resetImage}
+                  className={cx(styles["ico-delete"], styles[`${imageLink ? 'show' : ''}`])}
+                ></span>
+                <img src={imageLink} alt="" />
               </div>
             </div>
           </section>
