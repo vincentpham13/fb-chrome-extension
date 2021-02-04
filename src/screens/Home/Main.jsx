@@ -201,6 +201,10 @@ const Main = (props) => {
     }
   }
 
+  const removeFromMemberList = (uid) => {
+    setPageMembers(members => members.filter(mem => mem.uid !== uid))
+  }
+
   // Fetch members
   useEffect(() => {
     if (selectedPageID) {
@@ -265,6 +269,7 @@ const Main = (props) => {
                 <tr>
                   <th>UID</th>
                   <th>Tên người chat</th>
+                  <th width="90px"></th>
                 </tr>
               </thead>
               <tbody>
@@ -273,6 +278,13 @@ const Main = (props) => {
                     <tr key={member.uid}>
                       <td>{member.uid}</td>
                       <td>{member.name}</td>
+                      <td width="90px">
+                        <NormalButton
+                          title="Xoá"
+                          size="small"
+                          type="secondary"
+                          onClick={() => removeFromMemberList(member.uid)}
+                        /></td>
                     </tr>
                   ))
                 }
@@ -301,6 +313,7 @@ const Main = (props) => {
                   onClick={incrementSecond}
                 >+</button>
               </div>
+              <span> Giây</span>
             </div>
             <ProgressBar
               percent={percent}

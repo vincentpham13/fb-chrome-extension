@@ -4,6 +4,7 @@ import cx from 'classnames';
 
 import API from '../../utils/Api';
 import File from '../../utils/File';
+import Noti from '../../utils/Notification';
 
 import NormalButton from '../../components/Common/NormalButton';
 import styles from './Home.module.scss';
@@ -37,8 +38,8 @@ const Campaign = (props) => {
 
   const onCampaignNameChange = (e) => {
     const { value } = e.target;
+    setCampaignName(value);
     if (value) {
-      setCampaignName(value);
       setDataTab1({
         campaignName: value
       });
@@ -47,8 +48,8 @@ const Campaign = (props) => {
 
   const onMessageChange = (e) => {
     const { value } = e.target;
+    setMessage(value);
     if (value) {
-      setMessage(value);
       setDataTab1({
         message: value
       });
@@ -57,8 +58,9 @@ const Campaign = (props) => {
 
   const onImageLinkChange = (e) => {
     const { value } = e.target;
+    setImageLink(value);
+
     if (value) {
-      setImageLink(value);
       setDataTab1({
         imageLink: value
       });
@@ -93,7 +95,7 @@ const Campaign = (props) => {
   const gotoNextStep = () => {
     goNext();
     if (!campaignName || !message || !selectedPageID) {
-      // alert('Thiếu dữ liệu');
+      Noti.show('Chiến dịch', 'Vui lòng hoàn thành thông tin');
       return;
     }
 
