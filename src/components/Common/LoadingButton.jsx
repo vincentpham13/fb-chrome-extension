@@ -6,6 +6,7 @@ import styles from './Common.module.scss';
 
 const LoadingButton = ({
   loading,
+  title,
   ...rest
 }) => {
 
@@ -21,7 +22,7 @@ const LoadingButton = ({
             <span className={styles['icon-send']} />
           )}
 
-        {loading ? 'Đang gửi' : 'Gửi'}
+        {loading ? 'Đang gửi' : `${title ? title : 'Gửi ngay'}`}
       </button>
     </div>
   )

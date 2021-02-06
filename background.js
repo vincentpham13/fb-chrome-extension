@@ -1,12 +1,12 @@
 const BASE_URL = 'http://localhost:5000/api/v1';
-// const BASE_URL = 'https://api-extension.hana.ai/api/v1';
+// const BASE_URL = 'https://api-extension.bombot.vn/api/v1';
 
 const successURL = 'https://www.facebook.com/connect/login_success.html';
 const options = {
   type: "basic",
-  title: "Facebook Page Authentication Successful",
-  message: "Now you can send messages to your page's members!",
-  iconUrl: "logo192.png"
+  title: "Đăng nhập Facebook thành công",
+  message: "Mở extension để gửi tin nhắn ngay",
+  iconUrl: "logo.png"
 }
 
 const accessTokenFromSuccessURL = (url) => {
@@ -31,7 +31,6 @@ const onTabUpdated = (tabId, changeInfo, tab) => {
     chrome.storage.sync.set({ 'FBaccessToken': accessToken }, function () {
     });
     chrome.tabs.remove(tabId);
-    // chrome.tabs.onUpdated.removeListener(onTabUpdated);
   }
 }
 
@@ -64,23 +63,18 @@ const requestCompleted = ({
   statusCode,
   method,
 }) => {
-  if (type === "xmlhttprequest" && method === "GET" && statusCode === 200) {
+  console.log("🚀 ~ file: background.js ~ line 66 ~ statusCode", url, type, statusCode)
+  if (method === "GET" && statusCode === 200) {
     const regexPatterm = /https:\/\/m\.facebook\.com\/messages\/read\/\?fbid=([\d]*).*pageID=([\d]*)/g;
     const matched = [...url.matchAll(regexPatterm)];
 
     if (matched.length) {
-      const [, UID, pageID] = matched[0];
       chrome.runtime.sendMessage(chrome.runtime.id, {
-        type: "RECEIVE_COMPLETED_MESSAGE",
-        data: {
-          pageID: pageID,
-          memberID: UID,
-        },
+        type: "RECEIVE_COMPLETED_MESSAGE"
       }, {
       }, function (response) {
         // decide whether to make api
         if (!response) {
-          console.log(campaignId, accessToken);
           updateMessageCount(accessToken, campaignId, 1)
         }
       })
@@ -106,4 +100,3 @@ chrome.runtime.onInstalled.addListener(function () {
   console.log('add onComplee, event');
   chrome.webRequest.onCompleted.addListener(requestCompleted, { urls: ['https://m.facebook.com/*'] })
 });
-

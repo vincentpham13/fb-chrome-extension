@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Link, MemoryRouter as Router, Switch, Route, useRouteMatch, Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 import classnames from 'classnames';
 
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Row, Col } from 'reactstrap';
 import Header from "../../components/Common/Header";
 import Campaign from './Campaign';
 import CampaignHistory from './CampaignHistory';
@@ -32,12 +31,21 @@ const Home = ({
   const goNextMessageTab = () => {
     setActiveMessageTab('2');
   }
-  const goBackMessageTab = () => {
+  const goBackMessageTab = (data) => {
     setActiveMessageTab('1');
+    if (data) {
+      setActiveMainTab('1');
+      setDataTab1({
+        campaignId: data.id,
+        selectedPageID: data.pageId,
+        campaignName: data.name,
+        message: data.message,
+        memberUIDs: data?.memberUids,
+      })
+    }
   }
 
   const onReceiveDataTab1 = (data) => {
-    console.log("🚀 ~ file: Home.jsx ~ line 41 ~ onReceiveDataTab1 ~ data", data)
     setDataTab1({
       ...dataTab1,
       ...data
@@ -83,6 +91,7 @@ const Home = ({
                         fbAccessToken={fbAccessToken}
                         accessToken={accessToken}
                         setDataTab1={onReceiveDataTab1}
+                        initialData={dataTab1}
                         goNext={goNextMessageTab}
                       />
                     </Col>
@@ -108,6 +117,7 @@ const Home = ({
           <Row>
             <Col md="12">
               <CampaignHistory
+                goBack={goBackMessageTab}
                 accessToken={accessToken}
                 setLoading={setIsLoading}
               />

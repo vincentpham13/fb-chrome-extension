@@ -5,11 +5,13 @@ import styles from './Common.module.scss';
 
 const NormalButton = ({
   title,
+  type = 'primary',
+  size = "normal",
   ...rest
 }) => {
 
   return (
-    <div className={styles["btn-normal"]}>
+    <div className={cx(styles["btn-normal"], styles[type], styles[size])}>
       <button
         {...rest}
       >

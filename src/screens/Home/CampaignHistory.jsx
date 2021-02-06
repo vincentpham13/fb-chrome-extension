@@ -3,10 +3,14 @@ import cx from 'classnames';
 
 import API from '../../utils/Api';
 import styles from './Home.module.scss';
+import refreshIcon from '../../images/refresh-arrow.png';
+import emptyBox from '../../images/empty-box.png';
+import NormalButton from '../../components/Common/NormalButton';
 
 const CampaignHistory = ({
   accessToken,
   setLoading,
+  goBack,
 }) => {
 
   const [campaigns, setCampaigns] = useState([]);
@@ -20,10 +24,40 @@ const CampaignHistory = ({
     }
   }
 
+  const statusCampaign = (status) => {
+    switch (status) {
+      case 'pending':
+        return 'Đang chờ';
+      case 'running':
+        return 'Đang chạy';
+      case 'completed':
+        return 'Hoàn tất';
+      default:
+        return 'Không xác định';
+    }
+  }
+
+  const reloadPageCampaigns = async () => {
+    try {
+      setLoading(true);
+      const syncedCampaigns = await API.getPageCampaigns(accessToken, selectedPageID);
+      setCampaigns(syncedCampaigns?.length ? syncedCampaigns : []);
+    } catch (error) {
+      console.log("🚀 ~ file: CampaignHistory.jsx ~ line 55 ~ fetchPageCampaigns ~ error", error)
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const prepareToRunCampaign = (campaignId) => {
+    const campaign = campaigns.find(c => c.id == campaignId);
+    goBack(campaign);
+  }
+
   useEffect(() => {
     async function fetchSyncedFanpages() {
       setLoading(true);
-      const pages= await API.getSyncedFanpages(accessToken);
+      const pages = await API.getSyncedFanpages(accessToken);
       setLoading(false);
       setFanpages(pages?.length ? pages : []);
     }
@@ -33,10 +67,15 @@ const CampaignHistory = ({
   useEffect(() => {
     if (selectedPageID) {
       async function fetchPageCampaigns() {
-        setLoading(true);
-        const syncedCampaigns = await API.getPageCampaigns(accessToken, selectedPageID);
-        setLoading(false);
-        setCampaigns(syncedCampaigns?.length ? syncedCampaigns : []);
+        try {
+          setLoading(true);
+          const syncedCampaigns = await API.getPageCampaigns(accessToken, selectedPageID);
+          setCampaigns(syncedCampaigns?.length ? syncedCampaigns : []);
+        } catch (error) {
+          console.log("🚀 ~ file: CampaignHistory.jsx ~ line 55 ~ fetchPageCampaigns ~ error", error)
+        } finally {
+          setLoading(false);
+        }
       }
       fetchPageCampaigns();
     }
@@ -56,7 +95,7 @@ const CampaignHistory = ({
                   onChange={onSelectedPageChange}
                   className={styles["select-box"]}
                 >
-                  <option key={0} value={0}>Chọn Fanpage cần tra</option>
+                  <option key={0} value={0}>Chọn Fanpage cần xem</option>
                   {
                     fanpages.map(fPage => (
                       <option key={fPage.id} value={fPage.id}>{fPage.name}</option>
@@ -69,30 +108,47 @@ const CampaignHistory = ({
           <section className={cx(styles["menu-item"], styles["item-vertical"])}>
             <div className={styles["headline"]}>
               Chiến dịch đã chạy
-          </div>
+              <div
+                onClick={reloadPageCampaigns}
+                className={styles["btn-reload"]}
+              >
+                <img src={refreshIcon} alt="" />
+              </div>
+            </div>
             <table className={styles["page-members"]}>
               <thead>
                 <tr>
-                  <th>ID</th>
+                  <th width={"60px"}>ID</th>
                   <th>Tên chiến dịch</th>
-                  <th>Ngày tạo</th>
-                  <th>Số lượng tin nhắn</th>
-                  <th>Thành công</th>
-                  <th>Trạng thái</th>
+                  <th width={"100px"}>Ngày tạo</th>
+                  <th width={"80px"}>Số lượng tin nhắn</th>
+                  <th width={"80px"}>Thành công</th>
+                  <th width={"120px"}>Trạng thái</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className={styles["responsive"]}>
                 {
-                  campaigns.map(campaign => (
+                  campaigns.length ? campaigns.map(campaign => (
                     <tr key={campaign.id}>
-                      <td>{campaign.id}</td>
+                      <td width={"60px"}>{campaign.id}</td>
                       <td>{campaign.name}</td>
-                      <td>{new Date(campaign.createdAt).toLocaleDateString('en-GB')}</td>
-                      <td>{campaign.totalMessages}</td>
-                      <td>{campaign.successMessages}</td>
-                      <td>{campaign.status}</td>
+                      <td width={"100px"}>{new Date(campaign.createdAt).toLocaleString('vi-VN')}</td>
+                      <td width={"80px"}>{campaign.totalMessages}</td>
+                      <td width={"80px"}>{campaign.successMessages}</td>
+                      <td width={"120px"}>
+                        {
+                          campaign.status === 'pending' ? (
+                            <NormalButton
+                              title="Chạy ngay"
+                              size="small"
+                              type="secondary"
+                              onClick={() => prepareToRunCampaign(campaign.id)}
+                            />
+                          ) : statusCampaign(campaign.status)
+                        }
+                      </td>
                     </tr>
-                  ))
+                  )) : <img className={styles["empty"]} src={emptyBox} alt="" srcset=""/>
                 }
               </tbody>
             </table>

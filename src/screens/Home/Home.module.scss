@@ -4,24 +4,130 @@
   .menu-group {
     .menu-item {
       width: 100%;
-      padding: 0.875rem 0;
+      padding: 0.875rem 0 0 0;
       border-bottom: 1px solid #d8d5d5;
+
+      .btn-group {
+        display: flex;
+        div {
+          margin-right: 1rem;
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+      }
 
       &.item-vertical {
         flex-direction: column;
       }
 
-      &:last-child {
+      &:first-child {
         border-bottom: none;
-        display: flex;
+        flex-direction: column;
         justify-content: space-between;
       }
 
+      &:last-child {
+        border-bottom: none;
+        justify-content: space-between;
+      }
+
+      &.flex-direction-column {
+        display: flex;
+        flex-direction: column !important;
+      }
+
+      &.flex-direction-row {
+        display: flex;
+        flex-direction: row !important;
+        justify-content: space-between;
+
+        .col {
+          display: flex;
+          flex-direction: column;
+          margin: 0 0.5em;
+
+          &:last-child {
+            margin-right: 0;
+          }
+          &:first-child {
+            margin-left: 0;
+          }
+          &.col-70 {
+            width: 70%;
+          }
+          &.col-40 {
+            width: 40%;
+          }
+          &.col-30 {
+            width: 30%;
+          }
+          &.col-flex-1 {
+            width: 70%;
+          }
+        }
+      }
+
       .headline {
+        display: flex;
+        align-items: center;
         color: #2f4858;
         font-size: 1.125rem;
         font-weight: 600;
         margin-bottom: 0.5rem;
+
+        .btn-reload {
+          display: inline-block;
+          height: 35px;
+          cursor: pointer;
+
+          img {
+            max-width: 100%;
+            max-height: 100%;
+          }
+        }
+      }
+      .btn-upload {
+        input {
+          display: none;
+        }
+        margin-top: 10px;
+      }
+      .preview-image {
+        margin-top: 10px;
+        width: 100%;
+        padding-top: 50%;
+        flex: 1;
+        background-color: rgba(140, 140, 140, 0.31);
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+
+        img {
+          top: 0;
+          position: absolute;
+          max-width: 100%;
+          max-height: 100%;
+        }
+
+        .ico-delete {
+          display: none;
+          top: 0.235rem;
+          right: 0.235rem;
+          z-index: 10000;
+          background-image: url("../../images/delete.png");
+          background-size: contain;
+          position: absolute;
+          width: 1.45rem;
+          height: 1.45rem;
+          cursor: pointer;
+
+          &.show {
+            display: block;
+          }
+        }
       }
       .input-text {
         input,
@@ -49,6 +155,10 @@
           background-repeat: no-repeat, repeat;
           background-position: right 0.7em top 50%, 0 0;
           background-size: 0.65em auto, 100%;
+
+          &:focus {
+            outline-color: rgba(4, 174, 52, 1);
+          }
         }
       }
       .select-fanpage {
@@ -159,13 +269,23 @@
         }
         tbody {
           display: block;
-          height: 14.125rem;
+          height: 15.775rem;
           overflow: auto;
+
+          &.responsive {
+            min-height: 15.775rem;
+            height: 19rem;
+          }
+          .empty {
+            width: 6rem;
+            margin-top: 3rem;
+            margin-left: calc(50% - 3rem);
+          }
         }
         td {
           border: 1px solid #ddd;
-          padding: 5px 6px;
-          font-size: 15px;
+          padding: 6px;
+          font-size: 0.875rem;
           text-align: justify;
         }
         th {
@@ -174,8 +294,9 @@
           padding-top: 12px;
           padding-bottom: 12px;
           text-align: left;
-          background-color: #04ae34;
+          background-color: #01a351;
           color: white;
+          font-size: 0.875rem;
         }
         tr {
           &:nth-child(even) {

@@ -43,28 +43,50 @@
 
     .balance-ammount {
       font-size: 0.875rem;
-      width: 35px;
-      color: #04ae34;
+      width: 50px;
+      color: #01a351;
       text-transform: capitalize;
     }
   }
 }
 
-.btn-loading, .btn-normal {
-  margin-top: 10px;
+.btn-loading,
+.btn-normal {
+  // margin-top: 10px;
   display: inline-block;
+
+  &.secondary {
+    button {
+      background-color: #fff;
+      border: 1px solid #01a351;
+      color: #01a351;
+    }
+
+    &:hover {
+      button {
+        background-color: #01a351;
+        border: 1px solid #01a351;
+        color: #FFF;
+      }
+    }
+  }
+  &.small {
+    button {
+      height: 28px;
+    }
+  }
 
   button {
     display: inline-flex;
     align-items: center;
     justify-content: space-around;
     height: 36px;
-    min-width: 110px;
+    min-width: 4.6875em;
     padding: 0 0.625rem;
     border: none;
-    background-color: #04ae34;
-    border-radius: 4px;
+    background-color: #01a351;
     color: #fff;
+    border-radius: 4px;
     font-size: 1rem;
     cursor: pointer;
 
@@ -120,7 +142,7 @@
   text-align: center;
   width: 100%;
   > span {
-    background-color: #04ae34;
+    background-color: #01a351;
     display: block;
     height: 100%;
     overflow: hidden;

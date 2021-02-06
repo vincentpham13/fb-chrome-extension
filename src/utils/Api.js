@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
 const BASE_URL = 'http://localhost:5000/api/v1';
-// const BASE_URL = 'https://api-extension.hana.ai/api/v1';
+// const BASE_URL = 'https://api-extension.bombot.vn/api/v1';
 
 const axios = Axios.create({
   withCredentials: true,
@@ -40,8 +40,27 @@ const API = {
 
     return [];
   },
-  getPageMembers: async (pageID, nextUrl) => {
-    console.log('Annie Rice')
+  getPageMembers: async (pageID, accessToken) => {
+    console.log("🚀 ~ file: Api.js ~ line 44 ~ getPageMembers: ~ pageID, accessToken", pageID, accessToken)
+    const config = {
+      method: 'GET',
+      url: `${BASE_URL}/fanpages/${pageID}/members`,
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${accessToken}`
+      },
+      withCredentials: true
+    };
+
+    const data = (await axios(config))?.data
+    if (data.length) {
+      return data;
+    }
+
+    return [];
+  },
+  syncPageMembers: async (pageID, nextUrl) => {
+    console.log('sync Annie Rice')
     const config = {
       method: 'get',
       url: !nextUrl ? `https://mbasic.facebook.com/messages/?pageID=${pageID}` : nextUrl,
@@ -69,14 +88,14 @@ const API = {
 
     return nextPageUrl ? [
       ...UIDs,
-      ...(await API.getPageMembers(pageID, `https://mbasic.facebook.com${nextPageUrl}`))
+      ...(await API.syncPageMembers(pageID, `https://mbasic.facebook.com${nextPageUrl}`))
     ] : UIDs;
   },
   getUserInfo: async (accessToken) => {
     console.log('Cody Perez')
     const config = {
       method: 'get',
-      url: `https://graph.facebook.com/v9.0/me?access_token=${accessToken}&debug=all&fields=name%2Cpicture&format=json&method=get&pretty=0&suppress_http_code=1&transport=cors`,
+      url: `https://graph.facebook.com/v9.0/me?fields=id,name,picture.width(200).height(200)&access_token=${accessToken}`,
       headers: {
         'authority': 'graph.facebook.com',
         'content-type': 'application/x-www-form-urlencoded',
@@ -121,7 +140,24 @@ const API = {
 
     return null;
   },
-  createCampaign: async (accessToken, name, pageId, totalMessages) => {
+  getMe: async (accessToken) => {
+    console.log("🚀 ~ file: Api.js ~ line 125 ~ getMe: ~ accessToken", accessToken)
+    console.log('Gerald Castillo')
+    const config = {
+      method: 'GET',
+      url: `${BASE_URL}/account/me`,
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${accessToken}`
+      },
+      withCredentials: true
+    };
+
+    const data = (await axios(config))?.data
+    console.log("🚀 ~ file: Api.js ~ line 138 ~ getMe: ~ data", data)
+    return data || null;
+  },
+  createCampaign: async (accessToken, name, pageId, memberUIDs, message) => {
     console.log('Lela Briggs')
     const config = {
       method: 'post',
@@ -133,7 +169,27 @@ const API = {
       data: {
         name,
         pageId,
-        totalMessages,
+        memberUIDs,
+        message,
+      },
+      withCredentials: true
+    };
+
+    const data = (await axios(config))?.data
+    if (data?.id && data?.name) {
+      return data;
+    }
+
+    return null;
+  },
+  startCampaign: async (accessToken, campaignId) => {
+    console.log('Lela Briggs')
+    const config = {
+      method: 'post',
+      url: `${BASE_URL}/campaigns/${campaignId}/start`,
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${accessToken}`
       },
       withCredentials: true
     };
