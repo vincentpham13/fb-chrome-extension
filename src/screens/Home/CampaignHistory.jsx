@@ -132,7 +132,7 @@ const CampaignHistory = ({
                     <tr key={campaign.id}>
                       <td width={"60px"}>{campaign.id}</td>
                       <td>{campaign.name}</td>
-                      <td width={"100px"}>{new Date(campaign.createdAt).toLocaleString('en-GB')}</td>
+                      <td width={"100px"}>{new Date(campaign.createdAt).toLocaleString('vi-VN')}</td>
                       <td width={"80px"}>{campaign.totalMessages}</td>
                       <td width={"80px"}>{campaign.successMessages}</td>
                       <td width={"120px"}>
