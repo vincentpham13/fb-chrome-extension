@@ -32,10 +32,16 @@ const Header = ({
       </div>
       <div className={styles["balance-info"]}>
         <div className={styles["balance-headline"]}>
-          Số lượng tin nhắn còn lại
+         Tin nhắn còn lại:
         </div>
         <div className={styles["balance-ammount"]}>
           {userInfo?.remainingMessages}
+        </div>
+        <div className={styles["balance-headline"]}>
+          Hết hạn:
+        </div>
+        <div className={styles["balance-ammount"]}>
+          {new Date(userInfo?.validTo).toLocaleString('en-GB')}
         </div>
 
       </div>
