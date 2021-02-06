@@ -86,7 +86,7 @@ const Login = (props) => {
                 state: {
                   userInfo: {
                     ...fbuser,
-                    remainingMessages: me?.totalMessages - me?.successMessages,
+                    remainingMessages: me?.totalMessages == -1 ? 'Không giới hạn' : me?.totalMessages - me?.successMessages,
                   },
                   fbAccessToken,
                   accessToken: user.accessToken,
