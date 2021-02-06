@@ -84,6 +84,8 @@ code {
   width: 750px;
   height: 600px;
   background-color: #FFF;
+  background: url(./images/login_fb.jpg);
+  background-size: 100vh 100vw;
   padding: 0.75rem 0.75rem 0 0.75rem;
   border: 1px solid #2F4858;
   border-radius: 4px;
